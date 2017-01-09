@@ -1,0 +1,67 @@
+﻿@using IntelliTect.Coalesce.TypeDefinition
+@{
+    ViewData["Title"] = "My New Coalesce Application";
+}
+
+<div class="content" style="margin: 100px; margin-top: 0px">
+
+    <h1 class="thin" style="text-transform: lowercase; text-align: center">
+        welcome to your new application, @(User.Identity.Name)!
+        <br />
+        <small>
+            below you will find links to your coalesce-generated views.
+        </small>
+    </h1>
+    <br />
+    <h3>Here are the next steps to get started with your new Coalesce application:</h3>
+    <ol>
+        <li>
+            Create your data model by adding classes to the Models folder in your data project, and adding DbSet properties on AppDbContext.
+        </li>
+        <li>
+            Create an EF migration by running
+            <code>dotnet ef migrations add MigrationName</code>
+            in your .Data project. The pages below will not work until you do so.
+        </li>
+        <li>
+            Implement a proper authentication mechanism in Startup.cs and remove the existing dummy authentication. Options include
+            <a href="https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity">Identity</a>
+            and Windows Authentication (enabled in the Debug tab of the properties of your Web project.)
+        </li>
+    </ol>
+    <br />
+    <style>
+        .admin-container {
+            font-size: 1.3em;
+        }
+
+        td, .admin-container div {
+            padding: 3px 10px !important;
+        }
+    </style>
+    <div class="row admin-container">
+        <div class="col-lg-12">
+            <table class="table highlight-rows">
+                @foreach (var vm in ReflectionRepository.Models.Where(f => f.HasDbSet).OrderBy(f => f.Name))
+                {
+                    <tr>
+                        <td>@vm.DisplayName</td>
+                        @if (vm.SecurityInfo.IsReadAllowed(User))
+                        {
+                            <td>
+                                <a asp-action="Table" asp-controller="@vm.Name" style="padding-right: 15px">Table</a>
+                            </td>
+                            <td>
+                                <a asp-action="Cards" asp-controller="@vm.Name" style="padding-right: 15px">Cards</a>
+                            </td>
+                        }
+                        else
+                        {
+                            <td colspan="2" class="thin">unauthorized</td>
+                        }
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
