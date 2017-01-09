@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using CoalesceStarter.Data.Models;
 
 namespace CoalesceStarter.Data
 {
     public class AppDbContext : DbContext
     {
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+
         public AppDbContext()
         {
         }

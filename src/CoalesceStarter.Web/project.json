@@ -1,7 +1,11 @@
-﻿{
+{
   "dependencies": {
+    "CoalesceStarter.Data": "*",
+    "IntelliTect.Coalesce": "*",
+    "IntelliTect.Coalesce.Cli": "*",
+    "IntelliTect.Coalesce.CodeGeneration": "*",
+
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
-    
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
     "Microsoft.Extensions.Logging.Console": "1.0.0"
