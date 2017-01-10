@@ -1,4 +1,4 @@
-﻿$defaultNamespace = "CoalesceStarter";
+﻿$defaultNamespace = "Coalesce.Starter";
 $defaultDatabase = "CoalesceStarterDb";
 $defaultConnection = "Server=(localdb)\\MSSQLLocalDB;Database=$defaultDatabase;Trusted_Connection=True;MultipleActiveResultSets=True;";
 
@@ -50,7 +50,7 @@ if ($confirmation -eq 'y') {
 	Write-Host ""
 
     $vs = "$PSScriptRoot\.vs"
-    if (Get-ChildItem $vs){
+    if (Test-Path $vs){
 	    Write-Host "Deleting $vs"
         Remove-Item $vs -Recurse -Force
     }

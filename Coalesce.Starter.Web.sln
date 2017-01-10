@@ -1,0 +1,64 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FB58B8EA-A133-4430-B932-ED47D787517F}"
+	ProjectSection(SolutionItems) = preProject
+		global.json = global.json
+	EndProjectSection
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Coalesce.Starter.Web", "src\Coalesce.Starter.Web\Coalesce.Starter.Web.xproj", "{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Coalesce.Starter.Data", "src\Coalesce.Starter.Data\Coalesce.Starter.Data.xproj", "{2AC25B2F-5813-4BF4-BC20-F408213390D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{5ABE84DC-140B-4709-8150-F5D56CF783BF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{16DC6DBB-D58A-4BAF-AA68-32A995330D46}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IntelliTect.Coalesce.Cli", "submodules\Coalesce\src\IntelliTect.Coalesce.Cli\IntelliTect.Coalesce.Cli.xproj", "{3B393517-9C91-4432-B9D0-F48488767B8F}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IntelliTect.Coalesce", "submodules\Coalesce\src\IntelliTect.Coalesce\IntelliTect.Coalesce.xproj", "{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IntelliTect.Coalesce.CodeGeneration", "submodules\Coalesce\src\IntelliTect.Coalesce.CodeGeneration\IntelliTect.Coalesce.CodeGeneration.xproj", "{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AC25B2F-5813-4BF4-BC20-F408213390D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AC25B2F-5813-4BF4-BC20-F408213390D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AC25B2F-5813-4BF4-BC20-F408213390D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AC25B2F-5813-4BF4-BC20-F408213390D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B393517-9C91-4432-B9D0-F48488767B8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B393517-9C91-4432-B9D0-F48488767B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B393517-9C91-4432-B9D0-F48488767B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B393517-9C91-4432-B9D0-F48488767B8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859} = {2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}
+		{2AC25B2F-5813-4BF4-BC20-F408213390D9} = {2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}
+		{3B393517-9C91-4432-B9D0-F48488767B8F} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+	EndGlobalSection
+EndGlobal
