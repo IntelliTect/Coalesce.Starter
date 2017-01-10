@@ -92,7 +92,7 @@ namespace Coalesce.Starter.Web
                     Claim[] claims = new[] { new Claim(ClaimTypes.Name, "developmentuser") };
 
                     var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    await context.Authentication.SignInAsync(Scheme, new ClaimsPrincipal(identity));
+                    await context.Authentication.SignInAsync(Scheme, context.User = new ClaimsPrincipal(identity));
 
                     await next.Invoke();
                 });
