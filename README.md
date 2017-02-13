@@ -5,7 +5,7 @@ For more information on Coalesce, visit http://coalesce.intellitect.com/
 
 To quickly get up and running with a new [Coalesce](https://github.com/IntelliTect/Coalesce) project:
 
-1. Clone this repository
+1. Clone this repository with the `--recursive` flag.
 1. Run `git submodule update --init` if you didn't clone with the `--recursive` flag in order to grab Coalesce.
 1. Run `git pull` in `./submodules/Coalesce` to get the latest version of Coalesce if desired.
 1. Run `RenameProject.ps1` to rename the solution files and code namespaces to your desired project name.
