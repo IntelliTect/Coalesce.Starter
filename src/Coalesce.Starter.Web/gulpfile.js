@@ -112,7 +112,7 @@ gulp.task('ts', function () {
 
     // compile the root generated code into an app.js file
     var rootAppJsProject = typescriptCompiler.createProject('tsconfig.json', { outFile: 'app.js' });
-    var rootApp = gulp.src([paths.scripts + '/Generated/{Ko,ko}*.ts', '!' + paths.scripts + '/*.d.ts'])
+    var rootApp = gulp.src([paths.scripts + '/Generated/{Ko,ko}*.ts', paths.scripts + '/Partials/*.ts', '!' + paths.scripts + '/*.d.ts'])
     .pipe(sourcemaps.init())
     .pipe(typescriptCompiler(rootAppJsProject));
 
@@ -143,6 +143,7 @@ gulp.task("copy-ts", ['ts'], function () {
 
 gulp.task('ts:watch', function () {
     gulp.watch([paths.scripts + '/**/*.ts'], ['ts']);
+    gulp.watch([paths.scripts + '/Partials/*.ts'], ['ts']);
 });
 
 gulp.task('watch', ['sass:watch', 'ts:watch', 'js:watch'], function () {
