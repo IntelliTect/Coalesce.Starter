@@ -14,6 +14,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Coalesce.Starter.Web.Models;
 using Coalesce.Starter.Data.Models;
+using Coalesce.Starter.Data;
 
 namespace Coalesce.Starter.Web.Api
 {

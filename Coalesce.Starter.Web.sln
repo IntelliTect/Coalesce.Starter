@@ -1,28 +1,24 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FB58B8EA-A133-4430-B932-ED47D787517F}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Coalesce.Starter.Web", "src\Coalesce.Starter.Web\Coalesce.Starter.Web.xproj", "{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Coalesce.Starter.Data", "src\Coalesce.Starter.Data\Coalesce.Starter.Data.xproj", "{2AC25B2F-5813-4BF4-BC20-F408213390D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{5ABE84DC-140B-4709-8150-F5D56CF783BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{16DC6DBB-D58A-4BAF-AA68-32A995330D46}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IntelliTect.Coalesce.Cli", "submodules\Coalesce\src\IntelliTect.Coalesce.Cli\IntelliTect.Coalesce.Cli.xproj", "{3B393517-9C91-4432-B9D0-F48488767B8F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coalesce.Starter.Web", "src\Coalesce.Starter.Web\Coalesce.Starter.Web.csproj", "{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IntelliTect.Coalesce", "submodules\Coalesce\src\IntelliTect.Coalesce\IntelliTect.Coalesce.xproj", "{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Coalesce.Starter.Data", "src\Coalesce.Starter.Data\Coalesce.Starter.Data.csproj", "{2AC25B2F-5813-4BF4-BC20-F408213390D9}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "IntelliTect.Coalesce.CodeGeneration", "submodules\Coalesce\src\IntelliTect.Coalesce.CodeGeneration\IntelliTect.Coalesce.CodeGeneration.xproj", "{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelliTect.Coalesce", "submodules\Coalesce\src\IntelliTect.Coalesce\IntelliTect.Coalesce.csproj", "{FBE3F778-1866-4898-B6B6-8CAFA3557A91}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelliTect.Coalesce.Cli", "submodules\Coalesce\src\IntelliTect.Coalesce.Cli\IntelliTect.Coalesce.Cli.csproj", "{3581EB15-A803-416A-BF25-7BD6D17C27D9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelliTect.Coalesce.CodeGeneration", "submodules\Coalesce\src\IntelliTect.Coalesce.CodeGeneration\IntelliTect.Coalesce.CodeGeneration.csproj", "{9172FE38-417B-4C10-A825-5F4310A3B64B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,18 +34,18 @@ Global
 		{2AC25B2F-5813-4BF4-BC20-F408213390D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AC25B2F-5813-4BF4-BC20-F408213390D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AC25B2F-5813-4BF4-BC20-F408213390D9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3B393517-9C91-4432-B9D0-F48488767B8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3B393517-9C91-4432-B9D0-F48488767B8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3B393517-9C91-4432-B9D0-F48488767B8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3B393517-9C91-4432-B9D0-F48488767B8F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBE3F778-1866-4898-B6B6-8CAFA3557A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBE3F778-1866-4898-B6B6-8CAFA3557A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBE3F778-1866-4898-B6B6-8CAFA3557A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBE3F778-1866-4898-B6B6-8CAFA3557A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3581EB15-A803-416A-BF25-7BD6D17C27D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3581EB15-A803-416A-BF25-7BD6D17C27D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3581EB15-A803-416A-BF25-7BD6D17C27D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3581EB15-A803-416A-BF25-7BD6D17C27D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9172FE38-417B-4C10-A825-5F4310A3B64B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9172FE38-417B-4C10-A825-5F4310A3B64B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9172FE38-417B-4C10-A825-5F4310A3B64B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9172FE38-417B-4C10-A825-5F4310A3B64B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,8 +53,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{BB011F45-1DB2-4BD8-B5A0-EC6A07B56859} = {2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}
 		{2AC25B2F-5813-4BF4-BC20-F408213390D9} = {2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}
-		{3B393517-9C91-4432-B9D0-F48488767B8F} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
-		{3539E1E7-0DA6-4B02-83F9-FB40FBF5879F} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
-		{BDA3EB93-FAD9-4AB2-9E23-0FE133816044} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+		{FBE3F778-1866-4898-B6B6-8CAFA3557A91} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+		{3581EB15-A803-416A-BF25-7BD6D17C27D9} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+		{9172FE38-417B-4C10-A825-5F4310A3B64B} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
 	EndGlobalSection
 EndGlobal

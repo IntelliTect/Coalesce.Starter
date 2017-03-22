@@ -10,6 +10,7 @@
     using System.Security.Claims;
     using Coalesce.Starter.Web.Models;
     using Coalesce.Starter.Data.Models;
+    using Coalesce.Starter.Data;
 
 using static Coalesce.Starter.Data.Models.ApplicationUser;
 

@@ -35,7 +35,7 @@ paths.lib = paths.wwwroot + "/lib/";
 function getFolders(dir) {
     return fs.readdirSync(dir)
 		.filter(function (file) {
-		    return fs.statSync(path.join(dir, file)).isDirectory();
+            return fs.statSync(path.join(dir, file)).isDirectory();
 		});
 }
 
@@ -74,7 +74,9 @@ gulp.task("copy-lib", ['clean-lib'], function () {
 });
 
 gulp.task("copy-files", ['copy-lib', 'copy-ts', 'copy-js'])
-{}
+{
+    // Only dependent tasks
+}
 
 gulp.task("copy-js", function () {
     gulp.src(paths.scripts + "*.js")
@@ -155,7 +157,7 @@ gulp.task('default', ['copy-lib', 'sass', 'ts', 'watch'], function () {
 
 var coalesceCli = "../../submodules/Coalesce/src/IntelliTect.Coalesce.Cli";
 gulp.task('coalesce:build', function (cb) {
-    exec('dotnet build "' + coalesceCli + '/project.json"', function (err, stdout, stderr) {
+    exec('dotnet build "' + coalesceCli + '/IntelliTect.Coalesce.Cli.csproj"', function (err, stdout, stderr) {
         console.log(stdout);
         console.log(stderr);
         cb(err);
@@ -164,7 +166,8 @@ gulp.task('coalesce:build', function (cb) {
 
 gulp.task('coalesce:gen', ['coalesce:build'],
     shell.task(
-        ['"' + coalesceCli + '/bin/Debug/net46/win7-x64/IntelliTect.Coalesce.Cli.exe" -dc AppDbContext -dp ../Coalesce.Starter.Data -wp ./ -filesOnly true -ns Coalesce.Starter.Web'],
+        ['"' + coalesceCli + '/bin/Debug/net46/win7-x86/IntelliTect.Coalesce.Cli.exe" ' +
+            '-dc AppDbContext -dp ../Coalesce.Starter.Data -da Coalesce.Starter.Data -wp ./ -filesOnly true -ns Coalesce.Starter.Web'],
         { verbose: true }
     )
 );

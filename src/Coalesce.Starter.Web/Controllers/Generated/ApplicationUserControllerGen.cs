@@ -2,8 +2,9 @@ using IntelliTect.Coalesce.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.PlatformAbstractions;
-using Coalesce.Starter.Data;
+using Coalesce.Starter.Web;
 using Coalesce.Starter.Data.Models;
+using Coalesce.Starter.Data;
 
 namespace Coalesce.Starter.Web.Controllers
 {
