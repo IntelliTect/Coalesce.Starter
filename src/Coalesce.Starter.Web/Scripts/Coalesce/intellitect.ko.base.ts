@@ -65,14 +65,14 @@ module ViewModels {
         public isChecked: KnockoutObservable<boolean> = ko.observable(false);
         // Alternates the isExpanded flag. Use with a click binding for a button.
         public changeIsExpanded = (value?: boolean) => { // Call this with the edit button.
-            if (value !== true || value !== false) this.isExpanded(!this.isExpanded());
+            if (typeof (value) !== "boolean") this.isExpanded(!this.isExpanded());
             else this.isExpanded(value === true); // Force boolean
         };
         // Flag to use to determine if this item is being edited. Only for convenience.
         public isEditing = ko.observable(false);
         // Alternates the isEditing flag. Use with a click binding for a button.
         public changeIsEditing = (value) => {  // Call this with the edit button.
-            if (value !== true || value !== false) this.isEditing(!this.isEditing());
+            if (typeof (value) !== "boolean") this.isEditing(!this.isEditing());
             else this.isEditing(value === true);  // Force boolean
         };
         // List of errors found during validation.
@@ -402,7 +402,7 @@ module ViewModels {
         }
 
         // Supply methods to pop up a model editor
-        public showEditor = () => {
+        public showEditor = (callback?: any) => {
             // Close any existing modal
             $('#modal-dialog').modal('hide');
             // Get new modal content
@@ -414,10 +414,14 @@ module ViewModels {
                     // Data bind
                     var lastValue = this.isSavingAutomatically;
                     this.isSavingAutomatically = false;
-                    ko.applyBindings(self, document.getElementById("modal-dialog"));
+                    ko.applyBindings(this, document.getElementById("modal-dialog"));
                     this.isSavingAutomatically = lastValue;
                     // Show the dialog
                     $('#modal-dialog').modal('show');
+                    // Make the callback when the form closes.
+                    $("#modal-dialog").on("hidden.bs.modal", () => {
+                        if ($.isFunction(callback)) callback(this);
+                    });
                 })
                 .always(() => {
                     intellitect.utilities.hideBusy();
@@ -442,6 +446,8 @@ module ListViewModels {
         protected areaUrl: string;
         protected apiUrlBase: string;
         public dataSources: any;
+        public modelKeyName: string;
+        public itemClass: typeof ViewModels.BaseViewModel;
 
         // The custom code to run in order to pull the initial datasource to use for the object that should be returned
         public listDataSource: any;
@@ -465,13 +471,7 @@ module ListViewModels {
                 }
                 this.isLoading(true);
 
-                var url = this.areaUrl + this.apiUrlBase + "/List?includes=" + this.includes + "&page=" + this.page()
-                    + "&pageSize=" + this.pageSize() + "&search=" + this.search()
-                    + "&orderBy=" + this.orderBy() + "&orderByDescending=" + this.orderByDescending()
-                            + "&listDataSource=";
-    
-                if (typeof this.listDataSource === "string") url += this.listDataSource;
-                else url += this.dataSources[this.listDataSource];
+                var url = this.areaUrl + this.apiUrlBase + "/List?" + this.queryParams();
 
                 if (this.queryString !== null && this.queryString !== "") url += "&" + this.queryString;
 
@@ -479,15 +479,14 @@ module ListViewModels {
                          url: url,
                         xhrFields: { withCredentials: true } })
                 .done((data) => {
-                    this.items.removeAll();
-                    for (var i in data.list) {
-                        var model = this.createItem(data.list[i]);
+
+                    RebuildArray(this.items, data.list, this.modelKeyName, this.itemClass, self, true);
+                    $.each(this.items(), (_, model) => {
                         model.includes = this.includes;
                         model.onDelete((item) => {
                             this.items.remove(item);
                         });
-                        this.items.push(model);
-                    }
+                    });
                     this.count(data.list.length);
                     this.totalCount(data.totalCount);
                     this.pageCount(data.pageCount);
@@ -510,6 +509,17 @@ module ListViewModels {
                     this.isLoading(false);
                 });
         };
+        protected queryParams = (pageSize?: number) => {
+            return $.param({
+                includes: this.includes,
+                page: this.page(),
+                pageSize: pageSize || this.pageSize(),
+                search: this.search(),
+                orderBy: this.orderBy(),
+                orderByDescending: this.orderByDescending(),
+                listDataSource: this.dataSources[this.listDataSource]
+            });
+        }
         protected createItem: (newItem?: any, parent?: any) => TItem;
         // Adds a new item to the collection.
         public addNewItem = () => {
@@ -583,11 +593,93 @@ module ListViewModels {
         };
 
         // Control order of results
+        // Set to field name to order by ascending.
         public orderBy: KnockoutObservable<string> = ko.observable("");
+        // Set to field name to order by descending.
         public orderByDescending: KnockoutObservable<string> = ko.observable("");
+        // Set to field name to toggle ordering, ascending, descending, none.
+        public orderByToggle = (field: string) => {
+            if (this.orderBy() == field && !this.orderByDescending()) {
+                this.orderBy('');
+                this.orderByDescending(field);
+            }
+            else if (!this.orderBy() && this.orderByDescending() == field) {
+                this.orderBy('');
+                this.orderByDescending('');
+            }
+            else {
+                this.orderBy(field);
+                this.orderByDescending('');
+            }
+        };
 
         // True once the data has been loaded.
         public isLoaded: KnockoutObservable<boolean> = ko.observable(false);
+
+        // Gets a URL to download a CSV for the current list with all elements.
+        public downloadAllCsvUrl: KnockoutComputed<string> = ko.computed<string>(() => {
+            var url = this.areaUrl + this.apiUrlBase + "/CsvDownload?" + this.queryParams(10000);
+            return url;
+        }, null, { deferEvaluation: true });
+        // Starts an upload of a CSV file
+        public csvUploadUi = (callback?: any) => {
+            // Remove the form if it exists.
+            $('#csv-upload').remove();
+            // Add the form to the page to take the input
+            $('body')
+                .append('<form id="csv-upload" display="none"></form>'); 
+            $('#csv-upload')
+                .attr("action", this.areaUrl + this.apiUrlBase + "/CsvUpload").attr("method", "post")
+                .append('<input type="file" style="visibility: hidden;" name="file"/>');
+            var self = this; // The next call messes up 'this' for TypeScript...
+            // Set up the click callback.
+            $('#csv-upload input[type=file]').change(function () {
+                // Get the files
+                var fileInput = $('#csv-upload input[type=file]')[0] as any;
+                var file = fileInput.files[0];
+                if (file) {
+                    var formData = new FormData();
+                    formData.append('file', file);
+                    intellitect.utilities.showBusy();
+                    self.isLoading(true);
+                    $.ajax({
+                        url: self.areaUrl + self.apiUrlBase + "/CsvUpload",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        type: 'POST'
+                    } as any)
+                    .done(function (data) {
+                        self.isLoading(false);
+                        if ($.isFunction(callback)) callback(data);
+                    })
+                    .fail(function (data) {
+                        alert("CSV Upload Failed");
+                    })
+                    .always(function () {
+                        self.load();
+                        intellitect.utilities.hideBusy();
+                    });
+                }
+                // Remove the form
+                $('#csv-upload').remove();
+            });
+            // Click on the input box
+            $('#csv-upload input[type=file]').click();
+        };
+
+        private loadTimeout: number = 0;
+        // reloads the page after a slight delay (100ms default) to ensure that all changes are made.
+        private delayedLoad = (milliseconds?: number) => {
+            if(this.loadTimeout) {
+                clearTimeout(this.loadTimeout);
+            }
+            this.loadTimeout = setTimeout(() => {
+                this.loadTimeout = 0;
+                this.load();
+            }, milliseconds || 100);
+        }
+
 
         public constructor() {
             var searchTimeout: number = 0;
@@ -611,6 +703,8 @@ module ListViewModels {
                     this.load();
                 }, 300);
             });
+            this.orderBy.subscribe(() => { if (this.isLoaded()) this.delayedLoad(); });
+            this.orderByDescending.subscribe(() => { if (this.isLoaded()) this.delayedLoad(); });
         }
     }
 }

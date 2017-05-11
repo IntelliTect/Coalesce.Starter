@@ -19,7 +19,9 @@ module ListViewModels {
         protected modelName = "ApplicationUser";
         protected areaUrl = ((true) ? baseUrl : baseUrl + '/');
         protected apiUrlBase = "api/ApplicationUser";
+        public modelKeyName = "applicationUserId";
         public dataSources = ApplicationUserDataSources;
+        public itemClass = ViewModels.ApplicationUser;
 
         public query: {
             where?: string;

@@ -64,8 +64,8 @@ gulp.task("copy-lib", ['clean-lib'], function () {
         "knockout": "knockout/dist/*.js",
         "knockout-validation": "knockout-validation/dist/*.js",
         "select2": "select2/dist/**/*.{css,js}",
-        "bootstrap-datetimepicker": "eonasdan-bootstrap-datetimepicker/build/**/*.{css,js}",
-    }
+        "bootstrap-datetimepicker": "eonasdan-bootstrap-datetimepicker/build/**/*.{css,js}"
+    };
 
     for (var destinationDir in bower) {
         gulp.src(paths.bower + bower[destinationDir])
@@ -73,10 +73,7 @@ gulp.task("copy-lib", ['clean-lib'], function () {
     }
 });
 
-gulp.task("copy-files", ['copy-lib', 'copy-ts', 'copy-js'])
-{
-    // Only dependent tasks
-}
+gulp.task("copy-files", ['copy-lib', 'copy-ts', 'copy-js']);
 
 gulp.task("copy-js", function () {
     gulp.src(paths.scripts + "*.js")
@@ -90,8 +87,8 @@ gulp.task('js:watch', function () {
 
 gulp.task("sass", function () {
     gulp.src(paths.styles + '/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest(paths.css))
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest(paths.css));
 });
 
 gulp.task('sass:watch', function () {
@@ -126,7 +123,7 @@ gulp.task('ts', function () {
         .pipe(gulp.dest(paths.js));
 
     // now compile the individual page files
-    var individualFileTypescriptProject = typescriptCompiler.createProject('tsconfig.json')
+    var individualFileTypescriptProject = typescriptCompiler.createProject('tsconfig.json');
     var individualTsResult = gulp.src([paths.scripts + '/*.ts', '!' + paths.scripts + '/{intellitect,Ko,ko}*.ts'])
     .pipe(sourcemaps.init())
     .pipe(typescriptCompiler(individualFileTypescriptProject));
@@ -155,22 +152,19 @@ gulp.task('default', ['copy-lib', 'sass', 'ts', 'watch'], function () {
 });
 
 
-var coalesceCli = "../../submodules/Coalesce/src/IntelliTect.Coalesce.Cli";
-gulp.task('coalesce:build', function (cb) {
-    exec('dotnet build "' + coalesceCli + '/IntelliTect.Coalesce.Cli.csproj"', function (err, stdout, stderr) {
-        console.log(stdout);
-        console.log(stderr);
-        cb(err);
-    });
-});
 
-gulp.task('coalesce:gen', ['coalesce:build'],
-    shell.task(
-        ['"' + coalesceCli + '/bin/Debug/net46/win7-x86/IntelliTect.Coalesce.Cli.exe" ' +
-            '-dc AppDbContext -dp ../Coalesce.Starter.Data -da Coalesce.Starter.Data -wp ./ -filesOnly true -ns Coalesce.Starter.Web'],
-        { verbose: true }
-    )
-);
+gulp.task('coalesce:build', shell.task(
+    [
+        'dotnet msbuild /nologo /t:restore /v:q "../../submodules/Coalesce/src/IntelliTect.Coalesce.Cli"',
+        'dotnet build "../../submodules/Coalesce/src/IntelliTect.Coalesce.Cli" -o %temp%/CoalesceExe -f net46'
+    ], { verbose: true }
+));
+
+gulp.task('coalesce:gen', ['coalesce:build'], shell.task(
+    [
+        '"%temp%/CoalesceExe/IntelliTect.Coalesce.Cli.exe" -dc AppDbContext -dp ../Coalesce.Starter.Data -wp ./ -filesOnly true -ns Coalesce.Starter.Web'
+    ], { verbose: true }
+));
 
 gulp.task('coalesce', function (cb) {
     runSequence('coalesce:gen', 'copy-lib', 'sass', 'ts', cb);
