@@ -19,24 +19,24 @@
 namespace Coalesce.Starter.Web.Api
 {
     [Route("api/[controller]")]
-[Authorize]
+    [Authorize]
     public partial class ApplicationUserController
     : LocalBaseApiController<Coalesce.Starter.Data.Models.ApplicationUser, ApplicationUserDtoGen>
-        {
-        private ClassViewModel _model;
+    {
+        protected ClassViewModel Model;
 
         public ApplicationUserController()
         {
-        _model = ReflectionRepository.Models.Single(m => m.Name == "ApplicationUser");
+            Model = ReflectionRepository.Models.Single(m => m.Name == "ApplicationUser");
         }
 
 
-            /// <summary>
-            /// Returns ApplicationUserDtoGen
-            /// </summary>
-            [HttpGet("list")]
-            [Authorize]
-            public virtual async Task<GenericListResult<Coalesce.Starter.Data.Models.ApplicationUser, ApplicationUserDtoGen>> List(
+        /// <summary>
+        /// Returns ApplicationUserDtoGen
+        /// </summary>
+        [HttpGet("list")]
+        [Authorize]
+        public virtual async Task<GenericListResult<Coalesce.Starter.Data.Models.ApplicationUser, ApplicationUserDtoGen>> List(
             string includes = null,
             string orderBy = null, string orderByDescending = null,
             int? page = null, int? pageSize = null,
@@ -136,14 +136,14 @@ namespace Coalesce.Starter.Web.Api
         public virtual async Task<SaveResult<ApplicationUserDtoGen>> Save(ApplicationUserDtoGen dto, string includes = null, string dataSource = null, bool returnObject = true)
         {
 
-            if (!dto.ApplicationUserId.HasValue && !_model.SecurityInfo.IsCreateAllowed(User)) {
+            if (!dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsCreateAllowed(User)) {
                 var result = new SaveResult<ApplicationUserDtoGen>();
                 result.WasSuccessful = false;
                 result.Message = "Create not allowed on ApplicationUser objects.";
                 Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 return result;
             }
-            else if (dto.ApplicationUserId.HasValue && !_model.SecurityInfo.IsEditAllowed(User)) {
+            else if (dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsEditAllowed(User)) {
                 var result = new SaveResult<ApplicationUserDtoGen>();
                 result.WasSuccessful = false;
                 result.Message = "Edit not allowed on ApplicationUser objects.";
@@ -255,14 +255,14 @@ namespace Coalesce.Starter.Web.Api
             var resultList = new List<SaveResult<ApplicationUserDtoGen>>();
             foreach (var dto in list){
                 // Check if creates/edits aren't allowed
-                if (!dto.ApplicationUserId.HasValue && !_model.SecurityInfo.IsCreateAllowed(User)) {
+                if (!dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsCreateAllowed(User)) {
                     var result = new SaveResult<ApplicationUserDtoGen>();
                     result.WasSuccessful = false;
                     result.Message = "Create not allowed on ApplicationUser objects.";
                     Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     resultList.Add(result);
                 }
-                else if (dto.ApplicationUserId.HasValue && !_model.SecurityInfo.IsEditAllowed(User)) {
+                else if (dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsEditAllowed(User)) {
                     var result = new SaveResult<ApplicationUserDtoGen>();
                     result.WasSuccessful = false;
                     result.Message = "Edit not allowed on ApplicationUser objects.";
