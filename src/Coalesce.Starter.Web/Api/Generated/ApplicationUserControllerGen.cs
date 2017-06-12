@@ -222,6 +222,7 @@ namespace Coalesce.Starter.Web.Api
             return csv;
         }
 
+    
 
         /// <summary>
         /// Saves CSV data as an uploaded file
@@ -276,11 +277,7 @@ namespace Coalesce.Starter.Web.Api
             }
             return resultList;
         }
-
-
-
-
-        [Authorize]
+        
         protected override IQueryable<Coalesce.Starter.Data.Models.ApplicationUser> GetListDataSource(ListParameters parameters)
         {
 
