@@ -576,7 +576,7 @@ module Coalesce {
                         xhrFields: { withCredentials: true } })
                 .done((data) => {
 
-                    Coalesce.KnockoutUtilities.RebuildArray(this.items, data.list, this.modelKeyName, this.itemClass, self, true);
+                    Coalesce.KnockoutUtilities.RebuildArray(this.items, data.list, this.modelKeyName, this.itemClass, this, true);
                     $.each(this.items(), (_, model) => {
                         model.includes = this.includes;
                         model.onDelete((item) => {
@@ -788,7 +788,7 @@ module Coalesce {
             });
             this.page.subscribe(() => {
                 if (this.isLoaded() && !this.isLoading()) {
-                    this.load();
+                    this.delayedLoad(300);
                 }
             });
             this.search.subscribe(() => {

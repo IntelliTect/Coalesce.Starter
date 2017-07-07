@@ -1,20 +1,20 @@
-    using IntelliTect.Coalesce.Controllers;
-    using IntelliTect.Coalesce.Data;
-    using IntelliTect.Coalesce.Mapping;
-    using IntelliTect.Coalesce.Helpers.IncludeTree;
-    using IntelliTect.Coalesce.Models;
-    using IntelliTect.Coalesce.TypeDefinition;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Mvc;
-    using System;
-    using System.Linq;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using System.Net;
-    using System.Threading.Tasks;
-    using Coalesce.Starter.Web.Models;
-    using Coalesce.Starter.Data.Models;
-    using Coalesce.Starter.Data;
+using IntelliTect.Coalesce.Controllers;
+using IntelliTect.Coalesce.Data;
+using IntelliTect.Coalesce.Mapping;
+using IntelliTect.Coalesce.Helpers.IncludeTree;
+using IntelliTect.Coalesce.Models;
+using IntelliTect.Coalesce.TypeDefinition;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Threading.Tasks;
+using Coalesce.Starter.Web.Models;
+using Coalesce.Starter.Data.Models;
+using Coalesce.Starter.Data;
 
 namespace Coalesce.Starter.Web.Api
 {
@@ -44,7 +44,7 @@ namespace Coalesce.Starter.Web.Api
             string listDataSource = null,
             string search = null,
             // Custom fields for this object.
-            string applicationUserId = null,string name = null)
+            string applicationUserId = null, string name = null)
         {
 
             ListParameters parameters = new ListParameters(null, includes, orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
@@ -71,7 +71,7 @@ namespace Coalesce.Starter.Web.Api
             string listDataSource = null,
             string search = null,
             // Custom fields for this object.
-            string applicationUserId = null,string name = null)
+            string applicationUserId = null, string name = null)
         {
 
             ListParameters parameters = new ListParameters(fields, includes, orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
@@ -90,7 +90,7 @@ namespace Coalesce.Starter.Web.Api
             string listDataSource = null,
             string search = null,
             // Custom fields for this object.
-            string applicationUserId = null,string name = null)
+            string applicationUserId = null, string name = null)
         {
 
             ListParameters parameters = new ListParameters(where: where, listDataSource: listDataSource, search: search, fields: null);
@@ -119,7 +119,7 @@ namespace Coalesce.Starter.Web.Api
             listParams.AddFilter("id", id);
             return await GetImplementation(id, listParams);
         }
-        
+
 
 
         [HttpPost("delete/{id}")]
@@ -129,21 +129,23 @@ namespace Coalesce.Starter.Web.Api
 
             return DeleteImplementation(id);
         }
-        
+
 
         [HttpPost("save")]
         [Authorize]
         public virtual async Task<SaveResult<ApplicationUserDtoGen>> Save(ApplicationUserDtoGen dto, string includes = null, string dataSource = null, bool returnObject = true)
         {
 
-            if (!dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsCreateAllowed(User)) {
+            if (!dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsCreateAllowed(User))
+            {
                 var result = new SaveResult<ApplicationUserDtoGen>();
                 result.WasSuccessful = false;
                 result.Message = "Create not allowed on ApplicationUser objects.";
                 Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 return result;
             }
-            else if (dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsEditAllowed(User)) {
+            else if (dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsEditAllowed(User))
+            {
                 var result = new SaveResult<ApplicationUserDtoGen>();
                 result.WasSuccessful = false;
                 result.Message = "Edit not allowed on ApplicationUser objects.";
@@ -166,7 +168,7 @@ namespace Coalesce.Starter.Web.Api
         {
             return ChangeCollection(id, propertyName, childId, "Remove");
         }
-        
+
         /// <summary>
         /// Downloads CSV of ApplicationUserDtoGen
         /// </summary>
@@ -179,7 +181,7 @@ namespace Coalesce.Starter.Web.Api
             string listDataSource = null,
             string search = null,
             // Custom fields for this object.
-            string applicationUserId = null,string name = null)
+            string applicationUserId = null, string name = null)
         {
             ListParameters parameters = new ListParameters(null, "none", orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
 
@@ -207,7 +209,7 @@ namespace Coalesce.Starter.Web.Api
             string listDataSource = null,
             string search = null,
             // Custom fields for this object.
-            string applicationUserId = null,string name = null)
+            string applicationUserId = null, string name = null)
         {
             ListParameters parameters = new ListParameters(null, "none", orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
 
@@ -222,20 +224,21 @@ namespace Coalesce.Starter.Web.Api
             return csv;
         }
 
-    
+
 
         /// <summary>
         /// Saves CSV data as an uploaded file
         /// </summary>
         [HttpPost("CsvUpload")]
         [Authorize]
-        public virtual async Task<IEnumerable<SaveResult<ApplicationUserDtoGen>>> CsvUpload(Microsoft.AspNetCore.Http.IFormFile file, bool hasHeader = true) 
+        public virtual async Task<IEnumerable<SaveResult<ApplicationUserDtoGen>>> CsvUpload(Microsoft.AspNetCore.Http.IFormFile file, bool hasHeader = true)
         {
             if (file != null && file.Length > 0)
             {
                 using (var stream = file.OpenReadStream())
                 {
-                    using (var reader = new System.IO.StreamReader(stream)) {
+                    using (var reader = new System.IO.StreamReader(stream))
+                    {
                         var csv = reader.ReadToEnd();
                         return await CsvSave(csv, hasHeader);
                     }
@@ -249,35 +252,39 @@ namespace Coalesce.Starter.Web.Api
         /// </summary>
         [HttpPost("CsvSave")]
         [Authorize]
-        public virtual async Task<IEnumerable<SaveResult<ApplicationUserDtoGen>>> CsvSave(string csv, bool hasHeader = true) 
+        public virtual async Task<IEnumerable<SaveResult<ApplicationUserDtoGen>>> CsvSave(string csv, bool hasHeader = true)
         {
             // Get list from CSV
             var list = IntelliTect.Coalesce.Helpers.CsvHelper.ReadCsv<ApplicationUserDtoGen>(csv, hasHeader);
             var resultList = new List<SaveResult<ApplicationUserDtoGen>>();
-            foreach (var dto in list){
+            foreach (var dto in list)
+            {
                 // Check if creates/edits aren't allowed
-                if (!dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsCreateAllowed(User)) {
+                if (!dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsCreateAllowed(User))
+                {
                     var result = new SaveResult<ApplicationUserDtoGen>();
                     result.WasSuccessful = false;
                     result.Message = "Create not allowed on ApplicationUser objects.";
                     Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     resultList.Add(result);
                 }
-                else if (dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsEditAllowed(User)) {
+                else if (dto.ApplicationUserId.HasValue && !Model.SecurityInfo.IsEditAllowed(User))
+                {
                     var result = new SaveResult<ApplicationUserDtoGen>();
                     result.WasSuccessful = false;
                     result.Message = "Edit not allowed on ApplicationUser objects.";
                     Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                     resultList.Add(result);
                 }
-                else {
+                else
+                {
                     var result = await SaveImplementation(dto, "none", null, false);
                     resultList.Add(result);
                 }
             }
             return resultList;
         }
-        
+
         protected override IQueryable<Coalesce.Starter.Data.Models.ApplicationUser> GetListDataSource(ListParameters parameters)
         {
 

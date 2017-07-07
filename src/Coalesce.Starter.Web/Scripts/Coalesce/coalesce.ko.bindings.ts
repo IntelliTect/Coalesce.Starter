@@ -193,6 +193,7 @@ ko.bindingHandlers.select2AjaxMultiple = {
         var allowClear = allBindings.get('allowClear') || true
         var placeholder = $(element).attr('placeholder') || "select";
         var updating = false;
+        var pageSize = allBindings.get('pageSize') || 25;
 
         // Create the Select2
         $(element)
@@ -207,11 +208,17 @@ ko.bindingHandlers.select2AjaxMultiple = {
                             page: params.page
                         };
                     },
-                    processResults: function (data, page) {
+                    processResults: function (data, params) {
+                        params.page = params.page || 1;
                         for (var i in data.list) {
                             data.list[i].id = data.list[i][idFieldName];
                         }
-                        return { results: data.list };
+                        return {
+                            results: data.list,
+                            pagination: {
+                                more:(params.page*pageSize) < data.totalCount
+                            }
+                        };
                     },
                     cache: "true" //(allBindings.get('cache') || false).toString(),
                 },
@@ -472,7 +479,7 @@ ko.bindingHandlers.datePicker = {
             format: allBindings.get('format') || "M/D/YY h:mm a",
             stepping: allBindings.get('stepping') || 1,
             sideBySide: allBindings.get('sideBySide') || false,
-            timeZone: allBindings.get('timeZone') || null,
+            timeZone: allBindings.get('timeZone') || "",
             keyBinds: allBindings.get('keyBinds') || { left: null, right: null, delete: null },
         })
             .on("dp.change", function (e) {
