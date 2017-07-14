@@ -61,6 +61,7 @@ if ($confirmation -eq 'y') {
 		?{ $_.fullname -notmatch "\\bin\\?" } |
 		?{ $_.fullname -notmatch "\\obj\\?" } |
 		?{ $_.fullname -notmatch "\\packages\\?" } |
+		?{ $_.fullname -notmatch "\\submodules\\?" } |
 		?{ $_.fullname -notmatch "\\node_modules\\?" }
 	foreach ($file in $files)
 	{
