@@ -1,8 +1,8 @@
-using IntelliTect.Coalesce.Controllers;
+﻿using IntelliTect.Coalesce.Controllers;
 // Model Namespaces
 using Coalesce.Starter.Web;
-using Coalesce.Starter.Data.Models;
 using Coalesce.Starter.Data;
+using Coalesce.Starter.Data.Models;
 using IntelliTect.Coalesce.Interfaces;
 
 namespace Coalesce.Starter.Web.Api

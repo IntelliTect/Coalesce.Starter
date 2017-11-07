@@ -12,5 +12,10 @@ namespace Coalesce.Starter.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult Documentation()
+        {
+            return View();
+        }
     }
 }

@@ -1,7 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <Description>Coalesce Startup Data Library</Description>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <Authors>IntelliTect</Authors>
+    
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <!-- All these frameworks are included for testing code generation.
+    Override the used framework by specifying (framework: "tfm") in coalesce.json. -->
+    <!--
+      IMPORTANT NOTE REGARDING ENTITYFRAMEWORK MIGRATIONS (Ctrl+f: EFCore, EF Core):
+      All EF commands need to be ran with - -framework netcoreapp2.0. E.g.:
+      dotnet ef database update - -framework netcoreapp2.0 (no space between the dashes; space is there because double dash is illegal in XML comments).
+    -->
+    <TargetFrameworks>netstandard2.0;netcoreapp2.0;net462</TargetFrameworks>
     <AssemblyName>Coalesce.Starter.Data</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>Coalesce.Starter.Data</PackageId>
@@ -15,9 +27,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="1.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="1.1.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="1.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
@@ -26,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="1.0.0" />
+    <DotNetCliToolReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

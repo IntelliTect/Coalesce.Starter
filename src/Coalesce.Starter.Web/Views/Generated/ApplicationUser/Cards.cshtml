@@ -1,4 +1,4 @@
-@using IntelliTect.Coalesce.Helpers
+@using IntelliTect.Coalesce.Knockout.Helpers
 @{ ViewBag.Fluid = true; }
 
 
@@ -89,6 +89,10 @@
     {
 
     <script>
+        @if (!ViewBag.Editable)
+        {
+            @:Coalesce.GlobalConfiguration.viewModel.setupValidationAutomatically(false);
+        }
         var applicationUserList = new ListViewModels.ApplicationUserList();
         
         // Set up parent info based on the URL.

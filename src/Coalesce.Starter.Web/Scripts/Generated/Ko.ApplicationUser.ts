@@ -14,113 +14,101 @@ module ViewModels {
 
         protected apiController = "/ApplicationUser";
         protected viewController = "/ApplicationUser";
-        public dataSources = ListViewModels.ApplicationUserDataSources;
+    
+        /** 
+            The enumeration of all possible values of this.dataSource.
+        */
+        public dataSources: typeof ListViewModels.ApplicationUserDataSources = ListViewModels.ApplicationUserDataSources;
 
-
-        // The custom code to run in order to pull the initial datasource to use for the object that should be returned
+        /**
+            The data source on the server to use when retrieving the object.
+            Valid values are in this.dataSources.
+        */
         public dataSource: ListViewModels.ApplicationUserDataSources = ListViewModels.ApplicationUserDataSources.Default;
 
-        public static coalesceConfig
+        /** Behavioral configuration for all instances of ApplicationUser. Can be overidden on each instance via instance.coalesceConfig. */
+        public static coalesceConfig: Coalesce.ViewModelConfiguration<ApplicationUser>
             = new Coalesce.ViewModelConfiguration<ApplicationUser>(Coalesce.GlobalConfiguration.viewModel);
+
+        /** Behavioral configuration for the current ApplicationUser instance. */
         public coalesceConfig: Coalesce.ViewModelConfiguration<ApplicationUser>
             = new Coalesce.ViewModelConfiguration<ApplicationUser>(ApplicationUser.coalesceConfig);
     
-        // Observables
+
         public applicationUserId: KnockoutObservable<number> = ko.observable(null);
         public name: KnockoutObservable<string> = ko.observable(null);
 
        
-        // Create computeds for display for objects
         
 
-                // Pops up a stock editor for this object.
 
 
 
+
+
+        /** 
+            Load the ViewModel object from the DTO. 
+            @param force: Will override the check against isLoading that is done to prevent recursion. False is default.
+            @param allowCollectionDeletes: Set true when entire collections are loaded. True is the default. In some cases only a partial collection is returned, set to false to only add/update collections.
+        */
+        public loadFromDto = (data: any, force: boolean = false, allowCollectionDeletes: boolean = true) => {
+            if (!data || (!force && this.isLoading())) return;
+            this.isLoading(true);
+            // Set the ID 
+            this.myId = data.applicationUserId;
+            this.applicationUserId(data.applicationUserId);
+            // Load the lists of other objects
+            // Objects are loaded first so that they are available when the IDs get loaded.
+            // This handles the issue with populating select lists with correct data because we now have the object.
+
+            // The rest of the objects are loaded now.
+            this.name(data.name);
+            if (this.coalesceConfig.onLoadFromDto()){
+                this.coalesceConfig.onLoadFromDto()(this as any);
+            }
+            this.isLoading(false);
+            this.isDirty(false);
+    
+            if (this.coalesceConfig.validateOnLoadFromDto()) this.validate();
+        };
+
+        /** Save the object into a DTO */
+        public saveToDto = (): any => {
+            var dto: any = {};
+            dto.applicationUserId = this.applicationUserId();
+
+            dto.name = this.name();
+
+            return dto;
+        }
         
-        public originalData: KnockoutObservable<any> = ko.observable(null);
-        
-        // This method gets called during the constructor. This allows injecting new methods into the class that use the self variable.
-        public init(myself: ApplicationUser) {};
+        public setupValidation = () => {
+            if (this.errors !== null) return;
+            this.errors = ko.validation.group([
+            ]);
+            this.warnings = ko.validation.group([
+            ]);
+        }
+    
+        // Computed Observable for edit URL
+        public editUrl = ko.pureComputed(() => {
+            return this.coalesceConfig.baseViewUrl() + this.viewController + "/CreateEdit?id=" + this.applicationUserId();
+        });
 
         constructor(newItem?: any, parent?: any){
             super();
             var self = this;
             self.parent = parent;
             self.myId;
-            // Call an init function that allows for proper inheritance.
-            if ($.isFunction(self.init)){
-                self.init(self);
+
+            if (this.coalesceConfig.setupValidationAutomatically.peek()) {
+                this.setupValidation();
             }
-            
-            ko.validation.init({
-                grouping: {
-                    deep: true,
-                    live: true,
-                    observable: true
-                }
-            });
-
-            // SetupValidation {
-            
-            self.errors = ko.validation.group([
-                self.applicationUserId,
-                self.name,
-            ]);
-            self.warnings = ko.validation.group([
-            ]);
-
-            // Computed Observable for edit URL
-            self.editUrl = ko.computed(function() {
-                return self.coalesceConfig.baseViewUrl() + self.viewController + "/CreateEdit?id=" + self.applicationUserId();
-            });
 
             // Create computeds for display for objects
 
+    
 
-            // Load the ViewModel object from the DTO. 
-            // Force: Will override the check against isLoading that is done to prevent recursion. False is default.
-            // AllowCollectionDeletes: Set true when entire collections are loaded. True is the default. In some cases only a partial collection is returned, set to false to only add/update collections.
-			self.loadFromDto = function(data: any, force: boolean = false, allowCollectionDeletes: boolean = true) {
-				if (!data || (!force && self.isLoading())) return;
-				self.isLoading(true);
-				// Set the ID 
-				self.myId = data.applicationUserId;
-				self.applicationUserId(data.applicationUserId);
-				// Load the lists of other objects
-				// Objects are loaded first so that they are available when the IDs get loaded.
-				// This handles the issue with populating select lists with correct data because we now have the object.
-
-				// The rest of the objects are loaded now.
-				self.name(data.name);
-                if (self.afterLoadFromDto){
-                    self.afterLoadFromDto();
-                }
-				self.isLoading(false);
-				self.isDirty(false);
-                self.validate();
-			};
-
-    	    // Save the object into a DTO
-			self.saveToDto = function() {
-				var dto: any = {};
-				dto.applicationUserId = self.applicationUserId();
-
-    	        dto.name = self.name();
-
-				return dto;
-			}
-
-            // Methods to add to child collections
-
-
-            // Save on changes
-            function setupSubscriptions() {
-                self.name.subscribe(self.autoSave);
-            }  
-
-            // Create variables for ListEditorApiUrls
-            // Create loading function for Valid Values
 
 
             // Load all child objects that are not loaded.
@@ -131,20 +119,11 @@ module ViewModels {
                 }
             };
 
-
-            // Load all the valid values in parallel.
-            self.loadValidValues = function(callback) {
-                if ($.isFunction(callback)) callback();
-            };
-
-            // Enumeration Lookups.
-
             // This stuff needs to be done after everything else is set up.
             // Complex Type Observables
 
-            // Make sure everything is defined before we call this.
-            setupSubscriptions();
-
+            self.name.subscribe(self.autoSave);
+        
             if (newItem) {
                 if ($.isNumeric(newItem)) self.load(newItem);
                 else self.loadFromDto(newItem, true);

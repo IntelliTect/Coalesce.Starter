@@ -28,13 +28,12 @@ module ListViewModels {
         } = null;
 
         // The custom code to run in order to pull the initial datasource to use for the collection that should be returned
-        public listDataSource: ApplicationUserDataSources = ApplicationUserDataSources.Default;
+        public dataSource: ApplicationUserDataSources = ApplicationUserDataSources.Default;
 
         public static coalesceConfig = new Coalesce.ListViewModelConfiguration<ApplicationUserList, ViewModels.ApplicationUser>(Coalesce.GlobalConfiguration.listViewModel);
         public coalesceConfig = new Coalesce.ListViewModelConfiguration<ApplicationUserList, ViewModels.ApplicationUser>(ApplicationUserList.coalesceConfig);
 
-        // Valid values
-    
+
         protected createItem = (newItem?: any, parent?: any) => new ViewModels.ApplicationUser(newItem, parent);
 
         constructor() {
