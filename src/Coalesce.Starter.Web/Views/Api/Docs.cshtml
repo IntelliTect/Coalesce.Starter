@@ -1,8 +1,7 @@
 ﻿@model IntelliTect.Coalesce.TypeDefinition.ClassViewModel
 @using IntelliTect.Coalesce.TypeDefinition
-@using IntelliTect.Coalesce.Models
+@using IntelliTect.Coalesce.Knockout.Models
 @using IntelliTect.Coalesce.Utilities
-@{ Layout = "_Master"; }
 @{
     ClassViewModel vm = Model;
     TypeScriptDocumentation objDoc = ViewBag.ObjDoc;
@@ -162,9 +161,9 @@
                 @foreach (var prop in vm.SearchProperties())
                 {
                     <tr>
-                        <th>@prop.Key</th>
-                        <td>@prop.Value.SearchIsSplitOnSpaces</td>
-                        <td>@prop.Value.SearchMethod.ToString().ToProperCase()</td>
+                        <th>@prop.Property</th>
+                        <td>@prop.Property.SearchIsSplitOnSpaces</td>
+                        <td>@prop.Property.SearchMethod.ToString().ToProperCase()</td>
                     </tr>
                 }
 
@@ -205,7 +204,7 @@
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3>@vm.Name Alternate List Data Sources</h3>
-                <div>These can be accessed via the list view model's listDataSource via an enumeration.</div>
+                <div>These can be accessed via the list view model's dataSource via an enumeration.</div>
             </div>
             @if (vm.Methods.Any(m => m.IsIQueryableOfParent && m.IsClientMethod))
             {

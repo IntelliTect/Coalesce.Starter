@@ -1,20 +1,21 @@
-/// <binding AfterBuild='copy-files' ProjectOpened='default' />
+/// <binding AfterBuild='copy-files' ProjectOpened='default, copy-images' />
 /*
 This file in the main entry point for defining Gulp tasks and using Gulp plugins.
 Click here to learn more. http://go.microsoft.com/fwlink/?LinkId=518007
 */
 
 var gulp = require('gulp'),
+    //debug = require('gulp-debug'),
     flatten = require('gulp-flatten'),
     sourcemaps = require('gulp-sourcemaps'),
     sass = require('gulp-sass'),
     typescriptCompiler = require('gulp-typescript'),
-    rimraf = require('rimraf'),
+    del = require('del'),
     path = require('path'),
+    shell = require('gulp-shell'),
+    gutil = require('gulp-util'),
     rename = require('gulp-rename'),
     fs = require('fs'),
-    shell = require('gulp-shell'),
-    runSequence = require('run-sequence'),
     exec = require('child_process').exec;
 
 // Initialize directory paths.
@@ -23,9 +24,10 @@ var paths = {
     bower: "./bower_components/",
     scripts: "Scripts/",
     styles: "Styles/",
-    wwwroot: "./wwwroot/"
+    wwwroot: "./wwwroot/",
+    images: "Images/"
 };
-    // Destination Directory Paths
+// Destination Directory Paths
 paths.css = paths.wwwroot + "/css/";
 paths.fonts = paths.wwwroot + "/fonts/";
 paths.img = paths.wwwroot + "/img/";
@@ -34,13 +36,26 @@ paths.lib = paths.wwwroot + "/lib/";
 
 function getFolders(dir) {
     return fs.readdirSync(dir)
-		.filter(function (file) {
+        .filter(function (file) {
             return fs.statSync(path.join(dir, file)).isDirectory();
-		});
+        });
 }
 
+gulp.task('clean-images', function () {
+    return del(paths.img);
+});
+
+gulp.task("copy-images", ['clean-images'], function () {
+    gulp.src(paths.images + '**/*.{png,jpg,ico}')
+        .pipe(gulp.dest(paths.img));
+});
+
+gulp.task('img:watch', function () {
+    gulp.watch(paths.images + '**/*.{png,jpg,ico}', ['copy-images']);
+});
+
 gulp.task("clean-lib", function (cb) {
-    rimraf(paths.lib, cb);
+    return del(paths.img);
 });
 
 gulp.task("copy-lib", ['clean-lib'], function () {
@@ -69,11 +84,11 @@ gulp.task("copy-lib", ['clean-lib'], function () {
 
     for (var destinationDir in bower) {
         gulp.src(paths.bower + bower[destinationDir])
-          .pipe(gulp.dest(paths.lib + destinationDir));
+            .pipe(gulp.dest(paths.lib + destinationDir));
     }
 });
 
-gulp.task("copy-files", ['copy-lib', 'copy-ts', 'copy-js']);
+gulp.task("copy-files", ['copy-lib', 'ts', 'copy-js']);
 
 gulp.task("copy-js", function () {
     gulp.src(paths.scripts + "*.js")
@@ -86,13 +101,26 @@ gulp.task('js:watch', function () {
 
 
 gulp.task("sass", function () {
+    //gulp.src([paths.styles + '/*.scss', 'Areas/*/Styles/*.scss'])
+    // get the files from the root
     gulp.src(paths.styles + '/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest(paths.css));
+
+    //// get the files from the areas
+    //gulp.src('Areas/**/Styles/*.scss')
+    //.pipe(sass().on('error', sass.logError))
+    //    .pipe(flatten({ includeParents: 1 }))
+    //    .pipe(rename(function(path) {
+    //        var originalPath = path.dirname;
+    //        path.dirname += '/css';
+    //}))
+    //.pipe(gulp.dest(paths.wwwroot));
 });
 
 gulp.task('sass:watch', function () {
     gulp.watch([paths.styles + '/*.scss'], ['sass']);
+    //gulp.watch([paths.styles + '/*.scss', 'Areas/**/Styles/*.scss'], ['sass']);
 });
 
 
@@ -135,27 +163,71 @@ gulp.task('ts:watch', function () {
     gulp.watch([paths.scripts + '/Partials/*.ts'], ['ts']);
 });
 
-gulp.task('watch', ['sass:watch', 'ts:watch', 'js:watch'], function () {
+gulp.task('watch', ['sass:watch', 'ts:watch', 'js:watch', 'img:watch'], function () {
 });
 
 gulp.task('default', ['copy-lib', 'sass', 'ts', 'watch'], function () {
 });
 
+/*
 
+var componentModelVersion = "1.1.0";
+var codeGeneratorsMvcVersion = componentModelVersion;
+var nlogExtensionsVersion = "1.1.0";
 
-gulp.task('coalesce:build', shell.task(
-    [
-        'dotnet msbuild /nologo /t:restore /v:q "../../submodules/Coalesce/src/IntelliTect.Coalesce.Cli"',
-        'dotnet build "../../submodules/Coalesce/src/IntelliTect.Coalesce.Cli" -o %temp%/CoalesceExe -f net46'
-    ], { verbose: true }
-));
+gulp.task('nuget:publish:ComponentModel',
+    shell.task(['bower_components\\eonasdan-bootstrap-datetimepicker\\src\\nuget\\nuget ' +
+        'push ' +
+        '..\\..\\artifacts\\bin\\IntelliTect.Coalesce\\debug\\IntelliTect.Coalesce.' + componentModelVersion + '.nupkg ' +
+        '536300da-5e23-433c-8f45-f84e9a225b4b ' +
+        '-Source https://www.myget.org/F/intellitect-public/api/v2/package'])
+);
 
-gulp.task('coalesce:gen', ['coalesce:build'], shell.task(
-    [
-        '"%temp%/CoalesceExe/IntelliTect.Coalesce.Cli.exe" -dc AppDbContext -dp ../Coalesce.Starter.Data -wp ./ -filesOnly true -ns Coalesce.Starter.Web'
-    ], { verbose: true }
-));
+gulp.task('nuget:publish:CodeGeneratorsMvc',
+    shell.task(['bower_components\\eonasdan-bootstrap-datetimepicker\\src\\nuget\\nuget ' +
+        'push ' +
+        '..\\..\\artifacts\\bin\\IntelliTect.Coalesce.CodeGeneration\\debug\\IntelliTect.Coalesce.CodeGeneration.' + codeGeneratorsMvcVersion + '.nupkg ' +
+        '536300da-5e23-433c-8f45-f84e9a225b4b ' +
+        '-Source https://www.myget.org/F/intellitect-public/api/v2/package'])
+);
 
-gulp.task('coalesce', function (cb) {
-    runSequence('coalesce:gen', 'copy-lib', 'sass', 'ts', cb);
+gulp.task('nuget:publish:NLogExtensions',
+    shell.task(['bower_components\\eonasdan-bootstrap-datetimepicker\\src\\nuget\\nuget ' +
+        'push ' +
+        '..\\..\\artifacts\\bin\\IntelliTect.NLog.Extensions\\debug\\IntelliTect.NLog.Extensions.' + nlogExtensionsVersion + '.nupkg ' +
+        '536300da-5e23-433c-8f45-f84e9a225b4b ' +
+        '-Source https://www.myget.org/F/intellitect-public/api/v2/package'])
+);
+
+gulp.task('nuget:publish', ['nuget:publish:ComponentModel', 'nuget:publish:CodeGeneratorsMvc', 'nuget:publish:NLogExtensions']);
+
+*/
+
+var coalesceBuildDir = `${require('os').tmpdir()}/CoalesceExe`;
+
+gulp.task('coalesce:cleanbuild', function (cb) {
+    return del(coalesceBuildDir, { force: true });
 });
+
+gulp.task('coalesce:build', ['coalesce:cleanbuild'], shell.task([
+    'dotnet restore --verbosity quiet "../../submodules/coalesce/src/IntelliTect.Coalesce.Cli"',
+    `dotnet build "../../submodules/coalesce/src/IntelliTect.Coalesce.Cli/IntelliTect.Coalesce.Cli.csproj" -o "${coalesceBuildDir}" -f netcoreapp2.0`
+], { verbose: true }
+));
+
+// Build is required every time because the templates are compiled into the dll.
+// Sometimes the CoalesceExe folder doesn't get new DLLs and needs to have all files deleted.
+gulp.task('coalesce', ['coalesce:build'], shell.task
+    ([
+        `dotnet "${coalesceBuildDir}/IntelliTect.Coalesce.Cli.dll" `
+    ],
+    { verbose: true }
+    ));
+
+
+gulp.task('coalesce:debug', ['coalesce:build'], shell.task
+    ([
+        `dotnet "${coalesceBuildDir}/IntelliTect.Coalesce.Cli.dll"  --debug`
+    ],
+    { verbose: true }
+    ));

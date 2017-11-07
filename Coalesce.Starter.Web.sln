@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.4
+VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}"
 EndProject
@@ -19,6 +19,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelliTect.Coalesce.Cli", "submodules\Coalesce\src\IntelliTect.Coalesce.Cli\IntelliTect.Coalesce.Cli.csproj", "{3581EB15-A803-416A-BF25-7BD6D17C27D9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelliTect.Coalesce.CodeGeneration", "submodules\Coalesce\src\IntelliTect.Coalesce.CodeGeneration\IntelliTect.Coalesce.CodeGeneration.csproj", "{9172FE38-417B-4C10-A825-5F4310A3B64B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelliTect.Coalesce.CodeGeneration.Knockout", "submodules\Coalesce\src\IntelliTect.Coalesce.CodeGeneration.Knockout\IntelliTect.Coalesce.CodeGeneration.Knockout.csproj", "{4F7C2BF9-BEC6-4308-AE67-2D63C8ED7E31}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IntelliTect.Coalesce.Knockout", "submodules\Coalesce\src\IntelliTect.Coalesce.Knockout\IntelliTect.Coalesce.Knockout.csproj", "{EAA3F25D-EFC5-423E-BBEA-77E69F48F837}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +50,14 @@ Global
 		{9172FE38-417B-4C10-A825-5F4310A3B64B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9172FE38-417B-4C10-A825-5F4310A3B64B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9172FE38-417B-4C10-A825-5F4310A3B64B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F7C2BF9-BEC6-4308-AE67-2D63C8ED7E31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F7C2BF9-BEC6-4308-AE67-2D63C8ED7E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F7C2BF9-BEC6-4308-AE67-2D63C8ED7E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F7C2BF9-BEC6-4308-AE67-2D63C8ED7E31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAA3F25D-EFC5-423E-BBEA-77E69F48F837}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA3F25D-EFC5-423E-BBEA-77E69F48F837}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA3F25D-EFC5-423E-BBEA-77E69F48F837}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA3F25D-EFC5-423E-BBEA-77E69F48F837}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -56,5 +68,10 @@ Global
 		{FBE3F778-1866-4898-B6B6-8CAFA3557A91} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
 		{3581EB15-A803-416A-BF25-7BD6D17C27D9} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
 		{9172FE38-417B-4C10-A825-5F4310A3B64B} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+		{4F7C2BF9-BEC6-4308-AE67-2D63C8ED7E31} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+		{EAA3F25D-EFC5-423E-BBEA-77E69F48F837} = {5ABE84DC-140B-4709-8150-F5D56CF783BF}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CB1115D0-059B-4B9E-B0EE-9F9B91915075}
 	EndGlobalSection
 EndGlobal

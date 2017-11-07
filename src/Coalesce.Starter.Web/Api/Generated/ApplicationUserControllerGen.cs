@@ -1,20 +1,20 @@
+﻿using Coalesce.Starter.Data;
+using Coalesce.Starter.Data.Models;
+using Coalesce.Starter.Web.Models;
 using IntelliTect.Coalesce.Controllers;
 using IntelliTect.Coalesce.Data;
-using IntelliTect.Coalesce.Mapping;
 using IntelliTect.Coalesce.Helpers.IncludeTree;
+using IntelliTect.Coalesce.Mapping;
 using IntelliTect.Coalesce.Models;
 using IntelliTect.Coalesce.TypeDefinition;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Coalesce.Starter.Web.Models;
-using Coalesce.Starter.Data.Models;
-using Coalesce.Starter.Data;
 
 namespace Coalesce.Starter.Web.Api
 {
@@ -41,13 +41,13 @@ namespace Coalesce.Starter.Web.Api
             string orderBy = null, string orderByDescending = null,
             int? page = null, int? pageSize = null,
             string where = null,
-            string listDataSource = null,
+            string dataSource = null,
             string search = null,
             // Custom fields for this object.
             string applicationUserId = null, string name = null)
         {
 
-            ListParameters parameters = new ListParameters(null, includes, orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
+            ListParameters parameters = new ListParameters(null, includes, orderBy, orderByDescending, page, pageSize, where, dataSource, search);
 
             // Add custom filters
             parameters.AddFilter("ApplicationUserId", applicationUserId);
@@ -68,13 +68,13 @@ namespace Coalesce.Starter.Web.Api
             string orderBy = null, string orderByDescending = null,
             int? page = null, int? pageSize = null,
             string where = null,
-            string listDataSource = null,
+            string dataSource = null,
             string search = null,
             // Custom fields for this object.
             string applicationUserId = null, string name = null)
         {
 
-            ListParameters parameters = new ListParameters(fields, includes, orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
+            ListParameters parameters = new ListParameters(fields, includes, orderBy, orderByDescending, page, pageSize, where, dataSource, search);
 
             // Add custom filters
             parameters.AddFilter("ApplicationUserId", applicationUserId);
@@ -87,13 +87,13 @@ namespace Coalesce.Starter.Web.Api
         [Authorize]
         public virtual async Task<int> Count(
             string where = null,
-            string listDataSource = null,
+            string dataSource = null,
             string search = null,
             // Custom fields for this object.
             string applicationUserId = null, string name = null)
         {
 
-            ListParameters parameters = new ListParameters(where: where, listDataSource: listDataSource, search: search, fields: null);
+            ListParameters parameters = new ListParameters(where: where, dataSource: dataSource, search: search, fields: null);
 
             // Add custom filters
             parameters.AddFilter("ApplicationUserId", applicationUserId);
@@ -115,7 +115,7 @@ namespace Coalesce.Starter.Web.Api
         public virtual async Task<ApplicationUserDtoGen> Get(string id, string includes = null, string dataSource = null)
         {
 
-            ListParameters listParams = new ListParameters(includes: includes, listDataSource: dataSource);
+            ListParameters listParams = new ListParameters(includes: includes, dataSource: dataSource);
             listParams.AddFilter("id", id);
             return await GetImplementation(id, listParams);
         }
@@ -178,12 +178,12 @@ namespace Coalesce.Starter.Web.Api
             string orderBy = null, string orderByDescending = null,
             int? page = 1, int? pageSize = 10000,
             string where = null,
-            string listDataSource = null,
+            string dataSource = null,
             string search = null,
             // Custom fields for this object.
             string applicationUserId = null, string name = null)
         {
-            ListParameters parameters = new ListParameters(null, "none", orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
+            ListParameters parameters = new ListParameters(null, "none", orderBy, orderByDescending, page, pageSize, where, dataSource, search);
 
             // Add custom filters
             parameters.AddFilter("ApplicationUserId", applicationUserId);
@@ -206,12 +206,12 @@ namespace Coalesce.Starter.Web.Api
             string orderBy = null, string orderByDescending = null,
             int? page = 1, int? pageSize = 10000,
             string where = null,
-            string listDataSource = null,
+            string dataSource = null,
             string search = null,
             // Custom fields for this object.
             string applicationUserId = null, string name = null)
         {
-            ListParameters parameters = new ListParameters(null, "none", orderBy, orderByDescending, page, pageSize, where, listDataSource, search);
+            ListParameters parameters = new ListParameters(null, "none", orderBy, orderByDescending, page, pageSize, where, dataSource, search);
 
             // Add custom filters
             parameters.AddFilter("ApplicationUserId", applicationUserId);
@@ -285,10 +285,10 @@ namespace Coalesce.Starter.Web.Api
             return resultList;
         }
 
-        protected override IQueryable<Coalesce.Starter.Data.Models.ApplicationUser> GetListDataSource(ListParameters parameters)
+        protected override IQueryable<Coalesce.Starter.Data.Models.ApplicationUser> GetDataSource(ListParameters parameters)
         {
 
-            return base.GetListDataSource(parameters);
+            return base.GetDataSource(parameters);
         }
 
         // Methods from data class exposed through API Controller.

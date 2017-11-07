@@ -10,9 +10,8 @@
     "gulp-sass": "^3.1.0",
     "gulp-typescript": "^3.1.6",
     "typescript": "~2.3.2",
-    "rimraf": "^2.4.3",
+    "del": "3.0.0",
     "gulp-shell": "^0.5.2",
-    "gulp-util": "3.0.7",
-    "run-sequence": "1.2.2"
+    "gulp-util": "3.0.7"
   }
 }
