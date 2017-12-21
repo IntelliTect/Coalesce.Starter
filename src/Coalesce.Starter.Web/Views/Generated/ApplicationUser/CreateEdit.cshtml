@@ -17,9 +17,9 @@
                     <div class="form-control-static" data-bind="text: errorMessage"></div>
                 </div>
             </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">Name</label>
-<div class="col-md-8 prop-name">@(Knockout.InputFor<Coalesce.Starter.Data.Models.ApplicationUser>(p => p.Name))</div>                    </div>
+                <div class="form-group">
+                    <label class="col-md-4 control-label">Name</label>
+<div class="col-md-8 prop-name">@(Knockout.InputFor<Coalesce.Starter.Data.Models.ApplicationUser>(p => p.Name))</div>                </div>
         </div>
     </div>
     <div class="panel-body">
@@ -30,14 +30,14 @@
     @section Scripts
     {
     <script>
-        var aapplicationUser = new ViewModels.ApplicationUser();
-        aapplicationUser.includes = "Editor";
+        var model = new ViewModels.ApplicationUser();
+        model.includes = "Editor";
 
-        aapplicationUser.saveCallbacks.push(function(obj){
+        model.saveCallbacks.push(function(obj){
             // If there is a new id, set the one for this page
             if (!Coalesce.Utilities.GetUrlParameter('id')){
-                if (aapplicationUser.myId){
-                    var newUrl = Coalesce.Utilities.SetUrlParameter(window.location.href, "id", aapplicationUser.myId);
+                if (model.myId) {
+                    var newUrl = Coalesce.Utilities.SetUrlParameter(window.location.href, "id", model.myId);
                     window.history.replaceState(null, window.document.title, newUrl);
                 }
             }
@@ -45,21 +45,21 @@
 
         @if (ViewBag.Id != null)
                 {
-                    @:aapplicationUser.load('@ViewBag.Id');
+                    @:model.load('@ViewBag.Id');
                 }
         @foreach (var kvp in ViewBag.ParentIds)
                 {
-                    @:aapplicationUser.@(((string)(@kvp.Key)))(@kvp.Value);
+                    @:model.@(((string)(@kvp.Key)))(@kvp.Value);
                 }
 
         window.onbeforeunload = function(){
-            if (aapplicationUser.isDirty()) aapplicationUser.save();
+            if (model.isDirty()) model.save();
         }
 
-        aapplicationUser.isSavingAutomatically = false;
-        aapplicationUser.loadChildren(function() {
-            ko.applyBindings(aapplicationUser);
-            aapplicationUser.isSavingAutomatically = true;
+        model.coalesceConfig.autoSaveEnabled(false);
+        model.loadChildren(function() {
+            ko.applyBindings(model);
+            model.coalesceConfig.autoSaveEnabled(true);
         });
     </script>
     }

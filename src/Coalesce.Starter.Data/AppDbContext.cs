@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Coalesce.Starter.Data.Models;
+using IntelliTect.Coalesce;
 
 namespace Coalesce.Starter.Data
 {
+    [Coalesce]
     public class AppDbContext : DbContext
     {
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }

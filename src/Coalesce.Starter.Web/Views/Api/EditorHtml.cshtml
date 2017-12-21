@@ -6,46 +6,22 @@
 
 @{ ClassViewModel model = Model;}
 <div class="form-horizontal">
-    @foreach (var prop in model.Properties.Where(f => !f.IsHidden(HiddenAttribute.Areas.Edit) && f.SecurityInfo.IsReadable(User)).OrderBy(f => f.EditorOrder))
+    @foreach (var prop in model.ClientProperties.Where(f => !f.IsHidden(HiddenAttribute.Areas.Edit) && f.SecurityInfo.IsReadable(User)).OrderBy(f => f.EditorOrder))
     {
         if (ViewBag.SimpleEditorOnly == null || ViewBag.SimpleEditorOnly == false ||
                         (prop.IsManytoManyCollection == prop.Type.IsCollection))
         {
-            if (prop.IsComplexType)
-            {
-                <div class="panel panel-default" data-bind="with: @prop.JsVariable">
-                    <div class="panel-heading">
-                        <h4>@prop.DisplayName</h4>
-                    </div>
-                    <div class="panel-body">
-                        <!-- Properties  -->
-                        @foreach (var subProp in prop.Object.Properties.Where(f => !f.IsHidden(HiddenAttribute.Areas.Edit)).OrderBy(f => f.EditorOrder))
-                        {
-                            <div class="form-group">
-                                <label class="col-md-4 control-label">@subProp.DisplayName</label>
-                                <div class="col-md-8">
-                                    @Display.Property(subProp, true)
-                                    @*@Editors.DisplayOrEdit(subProp, true, false)*@
-                                </div>
-                            </div>
-                        }
-                    </div>
+            <div class="form-group">
+                <label class="col-md-4 control-label">@prop.DisplayName</label>
+                <div class="col-md-8">
+                    @Display.Property(prop, prop.SecurityInfo.IsEditable(User))
+                    @*@Editors.DisplayOrEdit(prop, true, false)*@
                 </div>
-            }
-            else
-            {
-                <div class="form-group">
-                    <label class="col-md-4 control-label">@prop.DisplayName</label>
-                    <div class="col-md-8">
-                        @Display.Property(prop, prop.SecurityInfo.IsEditable(User))
-                        @*@Editors.DisplayOrEdit(prop, true, false)*@
-                    </div>
-                </div>
-            }
+            </div>
         }
     }
 
-    @if (model.Methods.Any(f=>f.SecurityInfo.IsExecutable(User) && !f.IsStatic && f.IsClientMethod))
+    @if (model.ClientMethods.Any(f=>f.SecurityInfo.IsExecutable(User) && !f.IsStatic))
     {
     <div class="row">
         <div class="col-lg-offset-2 col-lg-10">
@@ -61,7 +37,7 @@
                         <label class="col-md-2">Loading</label>
                         <label class="col-md-2 bold">Notes</label>
                     </div>
-                    @foreach (MethodViewModel method in model.Methods.Where(f => f.SecurityInfo.IsExecutable(User) && !f.IsStatic && f.IsClientMethod))
+                    @foreach (MethodViewModel method in model.ClientMethods.Where(f => f.SecurityInfo.IsExecutable(User) && !f.IsStatic))
                         {
                         <div class="form-group form-horizontal">
                             <div class="col-md-2">

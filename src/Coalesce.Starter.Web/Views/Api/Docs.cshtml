@@ -63,14 +63,13 @@
                 <tr>
                     <th>Name</th>
                     <th>Type</th>
-                    <th class="text-center">Exposed</th>
                     <th class="text-center">Required</th>
                     <th class="text-center">Read Only</th>
                     <th class="text-center">Has Valid Values</th>
                     <th class="text-center">Client Validation</th>
                     <th>Security</th>
                 </tr>
-                @foreach (var prop in vm.Properties)
+                @foreach (var prop in vm.ClientProperties)
                 {
                     <tr>
                         <th>@prop.Name</th>
@@ -90,16 +89,6 @@
                             else
                             {
                                 <span>@prop.PureType.Name</span>
-                            }
-                        </td>
-                        <td class="text-center">
-                            @if (!prop.IsInternalUse)
-                            {
-                            <span class="glyphicon glyphicon-ok" style="color:green;"></span>
-                            }
-                            else
-                            {
-                            <span class="glyphicon glyphicon-remove" style="color:red;"></span>
                             }
                         </td>
                         <td class="text-center">
@@ -182,12 +171,12 @@
                     <th>TypeScript Parameters</th>
                     <th>Security</th>
                 </tr>
-                @foreach (var method in vm.Methods.Where(m => m.IsClientMethod))
+                @foreach (var method in vm.ClientMethods)
                 {
                     <tr>
                         <th>@method.Name</th>
                         <td>
-                            @method.ReturnType.NameWithTypeParams
+                            @method.ReturnType.FullyQualifiedName
                         </td>
                         <td>
                             @method.CsParameters
@@ -206,23 +195,14 @@
                 <h3>@vm.Name Alternate List Data Sources</h3>
                 <div>These can be accessed via the list view model's dataSource via an enumeration.</div>
             </div>
-            @if (vm.Methods.Any(m => m.IsIQueryableOfParent && m.IsClientMethod))
-            {
-                <ul class="list-group">
-                    @foreach (var method in vm.Methods.Where(m => m.IsIQueryableOfParent && m.IsClientMethod))
+            <ul class="list-group">
+                @foreach (var source in vm.ClientDataSources(ReflectionRepository.Global))
                 {
-                        <li class="list-group-item">
-                            @method.Name
-                        </li>
-                    }
-                </ul>
-            }
-            else
-            {
-                <div class="panel-body">
-                    None
-                </div>
-            }
+                    <li class="list-group-item">
+                        @source.Name
+                    </li>
+                }
+            </ul>
         </div>
 
 
@@ -261,21 +241,18 @@
                             <dt>Includes</dt>
                             <dd>The name of the list of child items to include by default, all immediate children are included. Specify 'none' to get no children. Note: this only works if lazy loading is turned off.</dd>
 
-                            <dt>List of field=value</dt>
+                            <dt>List of filter.[field]=[value]</dt>
                             <dd>
-                                A query parameter with the format [field]=[value] will automatically create a filter.
+                                A query parameter with the format filter.[field]=[value] will automatically create a filter.
                             </dd>
 
-                            <dt>Filter</dt>
+                            <dt>Where</dt>
                             <dd>Free form SQL filter with the syntax [field][operator][value]. eg. name='test', price>10</dd>
-
-                            <dt>Dto</dt>
-                            <dd>Fully qualified name of the DTO to return - i.e., Coalesce.Domain.Dtos.PersonDropDownDto</dd>
-
-                            <dt>ToList</dt>
+                            
+                            <dt>List of fields</dt>
                             <dd>
-                                Adding ToList to the query string will cause the query to execute before the sorting and paging,
-                                but after any filtering. This allows for sorting based on calculated fields.
+                                Any other string will be treated as a requested field name. If none are specified,
+                                all fields will be returned, otherwise only specified fields will be returned in a dynamic object.
                             </dd>
                         </dl>
                     </td>
@@ -312,7 +289,6 @@
                             If the Id is zero a new item is created. Validation is performed and passed back in the resultant object.
                             The the save was successful a WasSuccessful flag is set to true. The saved object is passed back
                             in the Object property. A message can be passed back in the Message Property.
-                            Field level validation is returnecd in ValidationIssues.
                         </p>
                 </tr>
                 <tr>
@@ -355,23 +331,6 @@
                             <dl>
                                 <dt>id</dt>
                                 <dd>ID to delete</dd>
-                            </dl>
-                        </p>
-                </tr>
-                <tr>
-                    <th>ChangeCollection</th>
-                    <td>
-                        <p>Changes a child many-to-many collection.</p>
-                        <p>
-                            <dl>
-                                <dt>id</dt>
-                                <dd>ID of the parent item. Object that matches the type of the controller.</dd>
-                                <dt>propertyName</dt>
-                                <dd>Name of the many-to-many collection's property.</dd>
-                                <dt>childId</dt>
-                                <dd>ID of the child item to add/remove.</dd>
-                                <dt>method</dt>
-                                <dd>Add or Remove.</dd>
                             </dl>
                         </p>
                 </tr>
