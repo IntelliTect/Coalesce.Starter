@@ -1,18 +1,13 @@
-﻿using Coalesce.Starter.Data;
-using Coalesce.Starter.Data.Models;
-using Coalesce.Starter.Web;
-using IntelliTect.Coalesce.Knockout.Controllers;
+﻿using IntelliTect.Coalesce.Knockout.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Coalesce.Starter.Web.Controllers
 {
     [Authorize]
-    public partial class ApplicationUserController
-        : BaseViewController<Coalesce.Starter.Data.Models.ApplicationUser, AppDbContext>
+    public partial class ApplicationUserController : BaseViewController<Coalesce.Starter.Data.Models.ApplicationUser>
     {
-        public ApplicationUserController() : base() { }
-
         [Authorize]
         public ActionResult Cards()
         {
@@ -45,9 +40,9 @@ namespace Coalesce.Starter.Web.Controllers
         }
 
         [Authorize]
-        public ActionResult Docs()
+        public ActionResult Docs([FromServices] IHostingEnvironment hostingEnvironment)
         {
-            return DocsImplementation();
+            return DocsImplementation(hostingEnvironment);
         }
     }
 }

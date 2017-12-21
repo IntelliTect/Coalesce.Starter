@@ -1,3 +1,4 @@
+using Coalesce.Starter.Data;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +21,9 @@ namespace Coalesce.Starter.Web
 
                 try
                 {
-                    //Domain.SampleData.Initialize(services.GetService<AppDbContext>());
+                    // Run database migrations.
+                    AppDbContext db = services.GetService<AppDbContext>();
+                    db.Initialize();
                 }
                 catch (Exception ex)
                 {

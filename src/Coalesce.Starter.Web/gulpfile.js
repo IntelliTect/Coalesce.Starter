@@ -64,18 +64,7 @@ gulp.task("copy-lib", ['clean-lib'], function () {
         "bootstrap/fonts": "bootstrap/fonts/*.{,eot,svg,ttf,woff,woff2}",
         "jquery": "jquery/dist/jquery*.{js,map}",
         "font-awesome": "components-font-awesome/**/*.{css,otf,eot,svg,ttf,woff,woff2}",
-        "simple-line-icons": "simple-line-icons/**/*.{css,otf,eot,svg,ttf,woff,woff2}",
-        "uniform": "jquery.uniform/**/{jquery.uniform.js,uniform.default.css}",
-        "bootstrap-switch": "bootstrap-switch/dist/**/*.{js,css}",
-        "bootstrap-daterangepicker": "bootstrap-daterangepicker/*.{js,css}",
-        "bootstrap-hover-dropdown": "bootstrap-hover-dropdown/bootstrap-hover-dropdown*.js",
-        "counter-up": "counter-up/*.js",
-        "waypoints": "waypoints/lib/jquery.waypoints.js",
-        "morris": "morris.js/morris.{css,js}",
-        "fullcalendar": "fullcalendar/dist/fullcalendar.{css,js}",
-        "jqvmap": "jqvmap/jqvmap/**/j*.{css,js}",
         "moment": "moment/moment.js",
-        "jquery-slimscroll": "jquery.slimscroll/jquery.*.js",
         "knockout": "knockout/dist/*.js",
         "knockout-validation": "knockout-validation/dist/*.js",
         "select2": "select2/dist/**/*.{css,js}",
@@ -101,26 +90,14 @@ gulp.task('js:watch', function () {
 
 
 gulp.task("sass", function () {
-    //gulp.src([paths.styles + '/*.scss', 'Areas/*/Styles/*.scss'])
     // get the files from the root
     gulp.src(paths.styles + '/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest(paths.css));
-
-    //// get the files from the areas
-    //gulp.src('Areas/**/Styles/*.scss')
-    //.pipe(sass().on('error', sass.logError))
-    //    .pipe(flatten({ includeParents: 1 }))
-    //    .pipe(rename(function(path) {
-    //        var originalPath = path.dirname;
-    //        path.dirname += '/css';
-    //}))
-    //.pipe(gulp.dest(paths.wwwroot));
 });
 
 gulp.task('sass:watch', function () {
     gulp.watch([paths.styles + '/*.scss'], ['sass']);
-    //gulp.watch([paths.styles + '/*.scss', 'Areas/**/Styles/*.scss'], ['sass']);
 });
 
 
@@ -169,65 +146,4 @@ gulp.task('watch', ['sass:watch', 'ts:watch', 'js:watch', 'img:watch'], function
 gulp.task('default', ['copy-lib', 'sass', 'ts', 'watch'], function () {
 });
 
-/*
-
-var componentModelVersion = "1.1.0";
-var codeGeneratorsMvcVersion = componentModelVersion;
-var nlogExtensionsVersion = "1.1.0";
-
-gulp.task('nuget:publish:ComponentModel',
-    shell.task(['bower_components\\eonasdan-bootstrap-datetimepicker\\src\\nuget\\nuget ' +
-        'push ' +
-        '..\\..\\artifacts\\bin\\IntelliTect.Coalesce\\debug\\IntelliTect.Coalesce.' + componentModelVersion + '.nupkg ' +
-        '536300da-5e23-433c-8f45-f84e9a225b4b ' +
-        '-Source https://www.myget.org/F/intellitect-public/api/v2/package'])
-);
-
-gulp.task('nuget:publish:CodeGeneratorsMvc',
-    shell.task(['bower_components\\eonasdan-bootstrap-datetimepicker\\src\\nuget\\nuget ' +
-        'push ' +
-        '..\\..\\artifacts\\bin\\IntelliTect.Coalesce.CodeGeneration\\debug\\IntelliTect.Coalesce.CodeGeneration.' + codeGeneratorsMvcVersion + '.nupkg ' +
-        '536300da-5e23-433c-8f45-f84e9a225b4b ' +
-        '-Source https://www.myget.org/F/intellitect-public/api/v2/package'])
-);
-
-gulp.task('nuget:publish:NLogExtensions',
-    shell.task(['bower_components\\eonasdan-bootstrap-datetimepicker\\src\\nuget\\nuget ' +
-        'push ' +
-        '..\\..\\artifacts\\bin\\IntelliTect.NLog.Extensions\\debug\\IntelliTect.NLog.Extensions.' + nlogExtensionsVersion + '.nupkg ' +
-        '536300da-5e23-433c-8f45-f84e9a225b4b ' +
-        '-Source https://www.myget.org/F/intellitect-public/api/v2/package'])
-);
-
-gulp.task('nuget:publish', ['nuget:publish:ComponentModel', 'nuget:publish:CodeGeneratorsMvc', 'nuget:publish:NLogExtensions']);
-
-*/
-
-var coalesceBuildDir = `${require('os').tmpdir()}/CoalesceExe`;
-
-gulp.task('coalesce:cleanbuild', function (cb) {
-    return del(coalesceBuildDir, { force: true });
-});
-
-gulp.task('coalesce:build', ['coalesce:cleanbuild'], shell.task([
-    'dotnet restore --verbosity quiet "../../submodules/coalesce/src/IntelliTect.Coalesce.Cli"',
-    `dotnet build "../../submodules/coalesce/src/IntelliTect.Coalesce.Cli/IntelliTect.Coalesce.Cli.csproj" -o "${coalesceBuildDir}" -f netcoreapp2.0`
-], { verbose: true }
-));
-
-// Build is required every time because the templates are compiled into the dll.
-// Sometimes the CoalesceExe folder doesn't get new DLLs and needs to have all files deleted.
-gulp.task('coalesce', ['coalesce:build'], shell.task
-    ([
-        `dotnet "${coalesceBuildDir}/IntelliTect.Coalesce.Cli.dll" `
-    ],
-    { verbose: true }
-    ));
-
-
-gulp.task('coalesce:debug', ['coalesce:build'], shell.task
-    ([
-        `dotnet "${coalesceBuildDir}/IntelliTect.Coalesce.Cli.dll"  --debug`
-    ],
-    { verbose: true }
-    ));
+gulp.task('coalesce', shell.task([`dotnet coalesce`], { verbose: true }));

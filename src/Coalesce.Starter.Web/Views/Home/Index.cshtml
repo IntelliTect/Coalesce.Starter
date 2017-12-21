@@ -32,18 +32,25 @@
     </h1>
     <br />
     <style>
-        .admin-container {
+        .admin-container tbody  {
             font-size: 1.3em;
         }
 
-            td, .admin-container div {
-                padding: 3px 10px !important;
-            }
+        td, .admin-container div {
+            padding: 3px 10px !important;
+        }
     </style>
-    <div class="row admin-container">
-        <div class="col-lg-12">
+    <div class="admin-container card">
+        <div class="card-body">
             <table class="table highlight-rows">
-                @foreach (var vm in ReflectionRepository.Models.Where(f => f.HasDbSet).OrderBy(f => f.Name))
+                <thead>
+                    <tr>
+                        <th>Entity</th>
+                        <th colspan="2">Links</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var vm in ReflectionRepository.Global.ApiBackedClasses.OrderBy(f => f.Name))
                 {
                     <tr>
                         <td>@vm.DisplayName</td>
@@ -62,6 +69,7 @@
                         }
                     </tr>
                 }
+                </tbody>
             </table>
         </div>
     </div>

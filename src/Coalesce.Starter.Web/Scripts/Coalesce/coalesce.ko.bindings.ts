@@ -3,7 +3,7 @@
 // Extend JQuery for Select2 4.0 since type bindings are not available yet.
 interface JQuery {
     select2(): JQuery;
-    select2(any): JQuery;
+    select2(any: any): JQuery;
 }
 
 // There is an issue with the current data time picker definitely typed definition.
@@ -27,8 +27,8 @@ interface KnockoutBindingHandlers {
     tooltip: KnockoutBindingHandler;
     fadeVisible: KnockoutBindingHandler;
     slideVisible: KnockoutBindingHandler;
-    moment: any;
-    momentFromNow: any;
+    moment: KnockoutBindingHandler & { defaults: any };
+    momentFromNow: KnockoutBindingHandler & { defaults: any };
     booleanValue: KnockoutBindingHandler;
     formatNumberText: KnockoutBindingHandler;
 }
@@ -56,8 +56,8 @@ ko.bindingHandlers.select2Ajax = {
                     url: allBindings.get('url'),
                     dataType: 'json',
                     delay: 250,
-                    data: function (params) {
-                        var data = {
+                    data: function (params: any) {
+                        var data: any = {
                             search: params.term,
                             page: params.page,
                             pageSize: pageSize,
@@ -67,14 +67,15 @@ ko.bindingHandlers.select2Ajax = {
                             data["_"] = new Date().getTime();
                         return data;
                     },
-                    processResults: function (data, params) {
+                    processResults: function (data: any, params: any) {
                         if (allBindings.has('idField')) {
 
                             if (allowClear && params.page == 1) {
                                 // Add a blank item
-                                var blank = {};
-                                blank[idField] = 0;
-                                blank[textField] = 'No Selection';
+                                var blank = {
+                                    [idField]: 0,
+                                    [textField]: 'No Selection',
+                                };
                                 data.list.unshift(blank);
                             }
                             for (var i in data.list) {
@@ -95,11 +96,11 @@ ko.bindingHandlers.select2Ajax = {
                 placeholder: placeholder,
                 allowClear: allowClear,
                 selectOnClose: selectOnClose,
-                templateResult: function (e) {
-                    return format.replace('{0}', (e[textField] || e.text || e));
+                templateResult: function (item: any) {
+                    return format.replace('{0}', (item[textField] || item.text || item));
                 },
-                templateSelection: function (e) {
-                    return selectionFormat.replace('{0}', (e[textField] || e.text || e));
+                templateSelection: function (item: any) {
+                    return selectionFormat.replace('{0}', (item[textField] || item.text || item));
                 },
             })
             .on("change", function (e) {
@@ -130,7 +131,7 @@ ko.bindingHandlers.select2Ajax = {
                 }
             });
         if (openOnFocus) {
-            $.data(element).select2.on("focus", function (e) {
+            $.data(element).select2.on("focus", function () {
                 $(element).select2("open");
             });
         }
@@ -203,8 +204,8 @@ ko.bindingHandlers.select2AjaxMultiple = {
                     url: url,
                     dataType: 'json',
                     delay: 250,
-                    data: function (params) {
-                        var data = {
+                    data: function (params: any) {
+                        var data: any = {
                             search: params.term,
                             page: params.page
                         };
@@ -212,7 +213,7 @@ ko.bindingHandlers.select2AjaxMultiple = {
                             data["_"] = new Date().getTime();
                         return data;
                     },
-                    processResults: function (data, params) {
+                    processResults: function (data: any, params: any) {
                         params.page = params.page || 1;
                         for (var i in data.list) {
                             data.list[i].id = data.list[i][idFieldName];
@@ -231,17 +232,17 @@ ko.bindingHandlers.select2AjaxMultiple = {
                 placeholder: placeholder,
                 selectOnClose: selectOnClose,
                 allowClear: allowClear,
-                templateResult: function (e) {
-                    if (e.Classes) {
+                templateResult: function (item: any) {
+                    if (item.Classes) {
                         // This has a class use the formatting
-                        var optionElement = $('<span class="' + e.Classes + '">' +
-                            format.replace('{0}', (e[textFieldName] || e.text || e))
+                        var optionElement = $('<span class="' + item.Classes + '">' +
+                            format.replace('{0}', (item[textFieldName] || item.text || item))
                             + '</span>');
                         return optionElement;
                     }
-                    return format.replace('{0}', (e[textFieldName] || e.text || e));
+                    return format.replace('{0}', (item[textFieldName] || item.text || item));
                 },
-                templateSelection: function (e) {
+                templateSelection: function (item: any) {
                     //if (e.Classes) {
                     //    // This has a class use the formatting
                     //    var optionElement = $('<span class="' + e.Classes + '">' +
@@ -249,7 +250,7 @@ ko.bindingHandlers.select2AjaxMultiple = {
                     //        + '</span>');
                     //    return optionElement;
                     //}
-                    return selectionFormat.replace('{0}', (e[textFieldName] || e.text || e));
+                    return selectionFormat.replace('{0}', (item[textFieldName] || item.text || item));
                 },
             })
             .on("change", function (e) {
@@ -302,7 +303,7 @@ ko.bindingHandlers.select2AjaxMultiple = {
                 $(element).data("select2-ajax-updating", false);
             });
         if (openOnFocus) {
-            $.data(element).select2.on("focus", function (e) {
+            $.data(element).select2.on("focus", function () {
                 $(element).select2("open");
             });
         }
@@ -362,7 +363,7 @@ ko.bindingHandlers.select2AjaxText = {
         var allowClear = allBindings.get('allowClear') || true
         var placeholder = $(element).attr('placeholder') || "select";
 
-        var myParams;
+        var myParams: any;
 
         // Create the Select2
         $(element)
@@ -371,9 +372,9 @@ ko.bindingHandlers.select2AjaxText = {
                     url: url,
                     dataType: 'json',
                     delay: 250,
-                    data: function (params) {
+                    data: function (params: any) {
                         myParams = params
-                        var data = {
+                        var data: any = {
                             property: allBindings.get('property'),
                             search: params.term,
                             page: params.page
@@ -382,13 +383,14 @@ ko.bindingHandlers.select2AjaxText = {
                             data["_"] = new Date().getTime();
                         return data;
                     },
-                    processResults: function (data, page) {
+                    processResults: function (data: any, page: any) {
                         var result = [];
                         if (allowClear && !myParams.term) {
                             // Add a blank item
-                            var blank = {};
-                            blank["id"] = 0;
-                            blank["text"] = 'No Selection';
+                            var blank = {
+                                id: 0,
+                                text: 'No Selection'
+                            };
                             result.unshift(blank);
                         }
                         var perfectMatch = false;
@@ -425,7 +427,7 @@ ko.bindingHandlers.select2AjaxText = {
                 }
             });
         if (openOnFocus) {
-            $.data(element).select2.on("focus", function (e) {
+            $.data(element).select2.on("focus", function () {
                 $(element).select2("open");
             });
         }
@@ -434,7 +436,13 @@ ko.bindingHandlers.select2AjaxText = {
     update: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
         // See if the value exists. If not, we haven't loaded it from the server yet.
         var value = valueAccessor()();
-        var options = $(element).find('option[value="' + value + '"]');
+        var options;
+        if (value) {
+          options = $(element).find('option[value="' + value.toString().replace(/"/g, '\\"') + '"]');
+        } else {
+          options = $(element).find('option[value="' + value + '"]');
+        }
+
 
         // The option doesn't exist.
         if (options.length == 0) {
@@ -476,7 +484,7 @@ ko.bindingHandlers.select2 = {
                 }
             });
         if (openOnFocus) {
-            $.data(element).select2.on("focus", function (e) {
+            $.data(element).select2.on("focus", function () {
                 $(element).select2("open");
             });
         }
@@ -495,9 +503,48 @@ ko.bindingHandlers.select2 = {
 
 
 ko.bindingHandlers.datePicker = {
-    init: function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+    init: function (element, valueAccessor: () => KnockoutObservable<moment.Moment>, allBindings, viewModel, bindingContext) {
         // See if we should use the parent element 
         var theElement = $(element).parent(".input-group.date") || $(element);
+
+        var getValue = (): moment.Moment | null => {
+            var newValue = theElement.data("DateTimePicker").date();
+
+            if (!newValue) {
+                return null;
+            }
+
+            var preserveDate = allBindings.get('preserveDate') || false;
+            var preserveTime = allBindings.get('preserveTime') || false;
+            var unwrappedValue = valueAccessor()();
+
+            if (!preserveDate && !preserveTime) {
+                newValue = newValue;
+            } else if (preserveTime) {
+                // This is a date entry, keep the time. 
+                var unwrappedTime = moment.duration(unwrappedValue.format('HH:mm:ss'));
+                newValue = moment(newValue.format("YYYY/MM/DD"), "YYYY/MM/DD").add(unwrappedTime);
+            } else if (preserveDate) {
+                // This is a time entry, keep the date.
+                var newTime = moment.duration(newValue.format('HH:mm:ss'));
+                newValue = moment(unwrappedValue.format('YYYY/MM/DD'), "YYYY/MM/DD").add(newTime);
+            }
+
+            return newValue;
+        }
+
+        var updateValue = () => {
+            var newValue = getValue();
+
+            // Set the value if it has changed.
+            var currentObservable = valueAccessor()();
+            if (!currentObservable || !newValue || !newValue.isSame(currentObservable)) {
+                valueAccessor()(newValue);
+            }
+        }
+
+
+
         theElement.datetimepicker({
             format: allBindings.get('format') || "M/D/YY h:mm a",
             stepping: allBindings.get('stepping') || 1,
@@ -506,33 +553,17 @@ ko.bindingHandlers.datePicker = {
             keyBinds: allBindings.get('keyBinds') || { left: null, right: null, delete: null },
         })
             .on("dp.change", function (e) {
-                var preserveDate = allBindings.get('preserveDate') || false;
-                var preserveTime = allBindings.get('preserveTime') || false;
-                var unwrappedValue = valueAccessor()();
-                var newValue = moment();
-                if (!preserveDate && !preserveTime) {
-                    newValue = e.date;
-                } else if (preserveTime) {
-                    // This is a date entry, keep the time. 
-                    var unwrappedTime = moment.duration(unwrappedValue.format('HH:mm:ss'));
-                    newValue = moment(e.date.format("YYYY/MM/DD"), "YYYY/MM/DD").add(unwrappedTime);
-                } else if (preserveDate) {
-                    // This is a time entry, keep the date.
-                    var newTime = moment.duration(e.date.format('HH:mm:ss'));
-                    newValue = moment(unwrappedValue.format('YYYY/MM/DD'), "YYYY/MM/DD").add(newTime);
+                if (allBindings.get('updateImmediate')) {
+                    updateValue();
                 }
-
-                // The control represents blank values as false for some reason. Really, guys?
-                if (!newValue) newValue = null;
-
-                // Set the value if it has changed.
-                if (!valueAccessor()() || !newValue || newValue.format() != valueAccessor()().format()) {
-                    valueAccessor()(newValue);
-                }
-
             })
+            .on("dp.hide", updateValue)
             .on('click', e => e.stopPropagation())
             .on('dblclick', e => e.stopPropagation());
+
+        $(element)
+            .on("blur", updateValue);
+
         // Add the validation message
         ko.bindingHandlers['validationCore'].init(element, valueAccessor, allBindings, viewModel, bindingContext)
         // The validation message needs to go after the input group with the button.
@@ -549,42 +580,45 @@ ko.bindingHandlers.datePicker = {
 
 
 ko.bindingHandlers.saveImmediately = {
-    init: function (element, valueAccessor, allBindings, viewModel: Coalesce.BaseViewModel<any>, bindingContext) {
-        if (!viewModel.coalesceConfig) {
-            console.error("saveImmediately binding was used in a context where $data is not a Coalesce.BaseViewModel<>");
+    init: function (element, valueAccessor, allBindings, viewModel: Coalesce.BaseViewModel, bindingContext) {
+        if (!viewModel.coalesceConfig || !viewModel.coalesceConfig.autoSaveEnabled) {
+            console.error("saveImmediately binding was used in a context where $data is not a Coalesce.BaseViewModel");
             return;
         }
 
         // Set up to save immediately when the cursor enters and return to a regular state when it leaves.
-        var oldValue;
+        var oldTimeoutValue: number;
         $(element).on("focus", function () {
-            oldValue = viewModel.coalesceConfig.saveTimeoutMs.raw();
+            oldTimeoutValue = viewModel.coalesceConfig.saveTimeoutMs.raw();
             viewModel.coalesceConfig.saveTimeoutMs(0);
         });
         $(element).on("blur", function () {
-            viewModel.coalesceConfig.saveTimeoutMs(oldValue);
+            viewModel.coalesceConfig.saveTimeoutMs(oldTimeoutValue);
         });
     }
 };
 
+
 // Delays the save until the cursor leaves the field even if there is a value change.
 ko.bindingHandlers.delaySave = {
-    init: function (element, valueAccessor, allBindings, viewModel: Coalesce.BaseViewModel<any>, bindingContext) {
-        if (!viewModel.coalesceConfig) {
-            console.error("delaySave binding was used in a context where $data is not a Coalesce.BaseViewModel<>");
+    init: function (element, valueAccessor, allBindings, viewModel: Coalesce.BaseViewModel, bindingContext) {
+        if (!viewModel.coalesceConfig || !viewModel.coalesceConfig.autoSaveEnabled) {
+            console.error("delaySave binding was used in a context where $data is not a Coalesce.BaseViewModel");
             return;
         }
+        var existingAutoSaveValueRaw: boolean;
 
         // Set up to not save immediately when the cursor enters and return to a regular state when it leaves.
         $(element).on("focus", function () {
+            existingAutoSaveValueRaw = viewModel.coalesceConfig.autoSaveEnabled.raw();
             viewModel.coalesceConfig.autoSaveEnabled(false);
         });
-        // Turn it back on when the cursor leaves.
+        // Turn it back to previous state when the cursor leaves.
         $(element).on("blur", function () {
-            viewModel.coalesceConfig.autoSaveEnabled(true);
-            // Save if there were changes.
-            if (viewModel.isDirty() && !viewModel.isSaving()) {
-                viewModel.save();
+            viewModel.coalesceConfig.autoSaveEnabled(existingAutoSaveValueRaw);
+            // If there were changes, perform an autosave now (autoSave() won't save if autosave is disabled.)
+            if (viewModel.isDirty()) {
+                viewModel.autoSave();
             }
 
         });
@@ -610,7 +644,7 @@ ko.bindingHandlers.tooltip = {
     update: function (element, valueAccessor) {
         var $element = $(element);
         var value = ko.unwrap(valueAccessor());
-        var options = {};
+        var options: any = {};
 
         if (value === null || typeof value !== 'object') {
             options = value;
@@ -706,11 +740,6 @@ ko.virtualElements.allowedBindings['let'] = true;
 
     ko.bindingHandlers.moment = {
 
-        isDate: function (input) {
-            return Object.prototype.toString.call(input) === '[object Date]' ||
-                input instanceof Date;
-        },
-
         defaults: {
             invalid: '',
             format: 'MM/DD/YYYY'
@@ -764,11 +793,6 @@ ko.virtualElements.allowedBindings['let'] = true;
 
 
     ko.bindingHandlers.momentFromNow = {
-
-        isDate: function (input) {
-            return Object.prototype.toString.call(input) === '[object Date]' ||
-                input instanceof Date;
-        },
 
         defaults: {
             invalid: '',

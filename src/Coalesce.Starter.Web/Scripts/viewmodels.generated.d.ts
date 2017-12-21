@@ -6,5 +6,5 @@
 
 
 /// <reference path="coalesce.dependencies.d.ts" />
-/// <reference path="Generated/Ko.ApplicationUser.ts" />
-/// <reference path="Generated/Ko.ApplicationUserList.ts" />
+/// <reference path="Generated/Ko.ApplicationUser.g.ts" />
+/// <reference path="Generated/Ko.ApplicationUserList.g.ts" />

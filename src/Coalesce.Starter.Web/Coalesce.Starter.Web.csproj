@@ -2,61 +2,28 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
-    <!-- All these frameworks are included for testing code generation. Override the used framework by specifying (framework: "tfm") in coalesce.json. -->
-    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
-
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>Coalesce.Starter.Web</AssemblyName>
     <OutputType>Exe</OutputType>
-    <PackageId>Coalesce.Starter.Web</PackageId>
     <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
+    <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
   </PropertyGroup>
   
   <ItemGroup>
-    <Content Update="wwwroot\**\*;Views\**\*;appsettings.json;web.config">
+    <Content Update="Views\**\*;appsettings.json;web.config">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    
-    <None Include="App.config" />
-  </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\submodules\Coalesce\src\IntelliTect.Coalesce.Knockout\IntelliTect.Coalesce.Knockout.csproj" />
     <ProjectReference Include="..\Coalesce.Starter.Data\Coalesce.Starter.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.0" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
+    <PackageReference Include="IntelliTect.Coalesce.Knockout" Version="2.0.0-alpha-113" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\Generated\" />
-    <Folder Include="Models\Generated\" />
-    <Folder Include="Scripts\Generated\" />
-    <Folder Include="Views\Generated\" />
-  </ItemGroup>
-  
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
-    <Exec Command="npm install" />
-    <Exec Command="bower install" />
-  </Target>
-  
+    <DotNetCliToolReference Include="IntelliTect.Coalesce.Tools" Version="2.0.0-alpha-113" />
+  </ItemGroup>  
 </Project>
