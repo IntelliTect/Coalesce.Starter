@@ -11,10 +11,10 @@ module ListViewModels {
             }
 
     export class ApplicationUserList extends Coalesce.BaseListViewModel<ViewModels.ApplicationUser> {
-        protected modelName = "ApplicationUser";
-        protected apiController = "/ApplicationUser";
-        public modelKeyName = "applicationUserId";
-        public itemClass = ViewModels.ApplicationUser;
+        protected modelName: string = "ApplicationUser";
+        protected apiController: string = "/ApplicationUser";
+        public modelKeyName: string = "applicationUserId";
+        public itemClass: new () => ViewModels.ApplicationUser = ViewModels.ApplicationUser;
 
         public filter: {
             applicationUserId?:string;
