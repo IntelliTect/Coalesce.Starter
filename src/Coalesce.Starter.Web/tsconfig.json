@@ -5,14 +5,10 @@
     "noEmitOnError": true,
     "removeComments": false,
     "sourceMap": true,
-    "module": "system",
-    "target": "es5"
+    "target": "es5",
+    "module": "system"
   },
-  "exclude": [
-    "bower_components",
-    "node_modules",
-    "wwwroot",
-    "obj",
-    "bin"
+  "include": [
+    "Scripts"
   ]
 }
