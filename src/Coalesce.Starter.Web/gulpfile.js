@@ -60,7 +60,7 @@ gulp.task("clean-lib", function (cb) {
 
 gulp.task("copy-lib", ['clean-lib'], function () {
     var bower = {
-        "bootstrap": "bootstrap/dist/**/bootstrap*.{js,map,css}",
+        "bootstrap": "bootstrap-sass/assets/**/bootstrap*.{js,map}",
         "bootstrap/fonts": "bootstrap/fonts/*.{,eot,svg,ttf,woff,woff2}",
         "jquery": "jquery/dist/jquery*.{js,map}",
         "font-awesome": "components-font-awesome/**/*.{css,otf,eot,svg,ttf,woff,woff2}",
@@ -90,9 +90,10 @@ gulp.task('js:watch', function () {
 
 
 gulp.task("sass", function () {
-    // get the files from the root
-    gulp.src(paths.styles + '/*.scss')
-        .pipe(sass().on('error', sass.logError))
+    return gulp.src(paths.styles + '/*.scss')
+        .pipe(sass({
+            includePaths: [paths.bower + 'bootstrap-sass/assets/stylesheets']
+        }).on('error', sass.logError))
         .pipe(gulp.dest(paths.css));
 });
 
