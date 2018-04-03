@@ -1,25 +1,31 @@
 ﻿/// <reference path="../coalesce.dependencies.d.ts" />
 
-class EnumValue {
-    id: number;
-    value: string;
-}
 
 module Coalesce {
+
+    export interface EnumValue {
+        id: number;
+        value: string;
+    }
+
     interface ComputedConfiguration<T> extends KnockoutComputed<T> {
         raw: () => T
     };
 
-    class CoalesceConfiguration<T> {
-        protected parentConfig: CoalesceConfiguration<any>;
+    interface CoalesceConfiguration {
+        [prop: string]: ComputedConfiguration<any> | any | undefined;
+    }
 
-        constructor(parentConfig?: CoalesceConfiguration<any>) {
+    class CoalesceConfiguration {
+        protected parentConfig?: CoalesceConfiguration;
+
+        constructor(parentConfig?: CoalesceConfiguration) {
             this.parentConfig = parentConfig;
         }
 
-        protected prop = function <TProp>(name: string): ComputedConfiguration<TProp> {
-            var k = "_" + name;
-            var raw = this[k] = ko.observable<TProp>(null);
+        protected prop = function <TProp>(this: CoalesceConfiguration, name: string): ComputedConfiguration<TProp> {
+            const k = "_" + name;
+            const raw = this[k] = ko.observable<TProp>(null);
             var computed: ComputedConfiguration<TProp>;
             computed = ko.computed<TProp>({
                 deferEvaluation: true, // This is essential. If not deferred, the observable will be immediately evaluated without parentConfig being set.
@@ -39,6 +45,15 @@ module Coalesce {
             return computed;
         }
 
+        /**
+            Gets the underlying observable that stores the object's explicit configuration value.
+        */
+        public raw = (name: keyof this): KnockoutObservable<any> | undefined => {
+            return (this as any)["_" + name];
+        }
+    }
+
+    class ModelConfiguration<T> extends CoalesceConfiguration {
         /** The relative url where the API may be found. */
         public baseApiUrl = this.prop<string>("baseApiUrl");
         /** The relative url where the generated views may be found. */
@@ -54,7 +69,7 @@ module Coalesce {
         public onFinishBusy = this.prop<(object: T) => void>("onFinishBusy");
     }
 
-    export class ViewModelConfiguration<T extends BaseViewModel> extends CoalesceConfiguration<T> {
+    export class ViewModelConfiguration<T extends BaseViewModel> extends ModelConfiguration<T> {
         /** Time to wait after a change is seen before auto-saving (if autoSaveEnabled is true). Acts as a debouncing timer for multiple simultaneous changes. */
         public saveTimeoutMs = this.prop<number>("saveTimeoutMs");
 
@@ -69,6 +84,18 @@ module Coalesce {
 
         /** Whether or not to reload the ViewModel with the state of the object received from the server after a call to .save(). */
         public loadResponseFromSaves = this.prop<boolean>("loadResponseFromSaves");
+
+        /**
+            Whether or not to reload the ViewModel with the state of the object recieved from the server after a call to .deleteItem().
+            This only applies to delete calls which respond with an object, which can be done through the model's behaviors.
+        */
+        public loadResponseFromDeletes = this.prop<boolean>("loadResponseFromDeletes");
+
+        /**
+            Whether or not the object should be removed from its parent after a call to /delete is made where the object is returned in the response.
+            If no object is recieved from a /delete call, this option has no effect - it will always be removed from its parent in these cases.
+        */
+        public removeFromParentAfterSoftDelete = this.prop<boolean>("removeFromParentAfterSoftDelete");
 
         /**
             Whether or not to validate the model after loading it from a DTO from the server.
@@ -96,35 +123,37 @@ module Coalesce {
             E.g. ViewModels.MyModel.coalesceConfig.initialDataSource(MyModel.dataSources.MyDataSource);
         */
         public initialDataSource = this.prop<DataSource<T> | (new () => DataSource<T>)>("initialDataSource");
+    }
+
+    export class ListViewModelConfiguration<T extends BaseListViewModel<TItem>, TItem extends BaseViewModel> extends ModelConfiguration<T> {
+    }
+
+    export class ServiceClientConfiguration<T extends ServiceClient> extends ModelConfiguration<T> {
+    }
+
+    export class AppConfiguration extends CoalesceConfiguration {
 
         /**
-            Gets the underlying observable that stores the object's explicit configuration value.
+            A theme to specify on select2 instances created by Coalesce's select2-based bindings.
         */
-        public raw = (name: keyof this): KnockoutObservable<any> | undefined => {
-            return (this as any)["_" + name];
-        }
+        public select2Theme = this.prop<string | null>("select2Theme");
     }
 
-    export class ListViewModelConfiguration<T extends BaseListViewModel<TItem>, TItem extends BaseViewModel> extends CoalesceConfiguration<T> {
-
-        /**
-            Gets the underlying observable that stores the object's explicit configuration value.
-        */
-        public raw = (name: keyof this): KnockoutObservable<any> | undefined => {
-            return (this as any)["_" + name];
-        }
+    class RootConfig extends ModelConfiguration<any> {
+        /** Application-wide configuration that does not pertain to any models. */
+        public readonly app = new AppConfiguration();
+        public readonly viewModel = new ViewModelConfiguration<BaseViewModel>(this);
+        public readonly listViewModel = new ListViewModelConfiguration<BaseListViewModel<BaseViewModel>, BaseViewModel>(this);
+        public readonly serviceClient = new ServiceClientConfiguration<ServiceClient>(this);
     }
 
-    class RootConfig extends CoalesceConfiguration<any> {
-        public viewModel = new ViewModelConfiguration<BaseViewModel>(this);
-        public listViewModel = new ListViewModelConfiguration<BaseListViewModel<BaseViewModel>, BaseViewModel>(this);
-    }
-
-    var invalidPropFunc: () => any = function () { if (arguments.length) throw "property is not valid at this level"; return null; };
-    var invalidProp: any = invalidPropFunc;
+    const invalidPropFunc: () => any = function () { if (arguments.length) throw "property is not valid at this level"; return null; };
+    const invalidProp: any = invalidPropFunc;
     invalidProp.raw = invalidProp;
 
-    export var GlobalConfiguration = new RootConfig();
+    export const GlobalConfiguration = new RootConfig();
+    GlobalConfiguration.app.select2Theme(null);
+
     GlobalConfiguration.baseApiUrl("/api");
     GlobalConfiguration.baseViewUrl("");
     GlobalConfiguration.showFailureAlerts(true);
@@ -137,6 +166,8 @@ module Coalesce {
     GlobalConfiguration.viewModel.autoSaveCollectionsEnabled(true);
     GlobalConfiguration.viewModel.showBusyWhenSaving(false);
     GlobalConfiguration.viewModel.loadResponseFromSaves(true);
+    GlobalConfiguration.viewModel.loadResponseFromDeletes(true);
+    GlobalConfiguration.viewModel.removeFromParentAfterSoftDelete(false);
     GlobalConfiguration.viewModel.validateOnLoadFromDto(true);
     GlobalConfiguration.viewModel.setupValidationAutomatically(true);
     GlobalConfiguration.viewModel.initialDataSource = invalidProp;
@@ -151,8 +182,124 @@ module Coalesce {
 
     export interface LoadableViewModel {
         loadFromDto: (data: object) => void;
-        parent: object;
-        parentCollection: object;
+        parent: object | null;
+        parentCollection: object | null;
+    }
+
+    export interface ClientMethodParent {
+        coalesceConfig: ModelConfiguration<this>;
+        apiController: string;
+    }
+
+    export interface ApiResult {
+        wasSuccessful: boolean;
+        message?: string;
+    }
+
+    export interface ValidationIssue {
+        property: string;
+        issue: string;
+    }
+
+    export interface ItemResult<T = any> extends ApiResult {
+        object?: T;
+        validationIssues?: ValidationIssue[];
+    }
+
+    export interface ListResult extends ApiResult {
+        list?: any[];
+        page: number;
+        pageSize: number;
+        pageCount: number;
+        totalCount: number;
+    }
+
+    export abstract class ClientMethod<TParent extends ClientMethodParent, TResult> {
+        public abstract readonly name: string;
+
+        /** HTTP method to be used when calling the API endpoint. */
+        public readonly verb: string = "POST";
+
+        /** Result of method strongly typed in a observable. */
+        public result: KnockoutObservable<TResult> = ko.observable<TResult>(null);
+
+        /** Raw result object of method simply wrapped in an observable. */
+        public rawResult: KnockoutObservable<ItemResult | null> = ko.observable(null);
+
+        /** True while the method is being called */
+        public isLoading: KnockoutObservable<boolean> = ko.observable<boolean>(false);
+
+        /** Error response when method has failed. */
+        public message: KnockoutObservable<string> = ko.observable<string>(null);
+
+        /** True if last invocation of method was successful. */
+        public wasSuccessful: KnockoutObservable<boolean | null> = ko.observable(null);
+
+        constructor (protected parent: TParent) { }
+
+        protected abstract loadResponse: (data: ApiResult, callback?: (result: TResult) => void, reload?: boolean) => void;
+
+        protected loadStandardResponse = (data: ApiResult) => { /* Nothing, normally. Other abstract derived classes can use this for non-specific result loading. */ };
+
+        protected invokeWithData(postData: object, callback?: (result: TResult) => void, reload?: boolean) {
+            this.isLoading(true);
+            this.message('');
+            this.wasSuccessful(null);
+            return $.ajax({
+                method: this.verb,
+                url: this.parent.coalesceConfig.baseApiUrl() + this.parent.apiController + '/' + this.name,
+                data: postData,
+                xhrFields: { withCredentials: true }
+            })
+                .done((data: ApiResult) => {
+                    // This is here because it was migrated from the old client method calls.
+                    // Whether or not this should be done remains to be see, but it was kept to reduce
+                    // the number of breaking changes being made.
+                    if (this.parent instanceof BaseViewModel)
+                        this.parent.isDirty(false);
+
+                    this.rawResult(data);
+                    this.message('');
+                    this.wasSuccessful(true);
+                    this.loadStandardResponse(data);
+                    this.loadResponse(data, callback, reload);
+                })
+                .fail((xhr) => {
+                    var errorMsg = "Unknown Error";
+                    if (xhr.responseJSON && xhr.responseJSON.message) errorMsg = xhr.responseJSON.message;
+                    this.wasSuccessful(false);
+                    this.message(errorMsg);
+
+                    if (this.parent.coalesceConfig.showFailureAlerts()) {
+                        this.parent.coalesceConfig.onFailure()(this.parent, `Could not call method ${this.name}: ${errorMsg}`);
+                    }
+                })
+                .always(() => {
+                    this.isLoading(false);
+                });
+        }
+    }
+
+    export abstract class ClientListMethod<TParent extends ClientMethodParent, TResult> extends ClientMethod<TParent, TResult> {
+        /** Page number. */
+        public page: KnockoutObservable<number | null> = ko.observable(null);
+        /** Number of items on a page. */
+        public pageSize: KnockoutObservable<number | null> = ko.observable(null);
+        /** Total count of items, even ones that are not on the page. */
+        public totalCount: KnockoutObservable<number | null> = ko.observable(null);
+        /** Total page count */
+        public pageCount: KnockoutObservable<number | null> = ko.observable(null);
+
+        /** Raw result object of method simply wrapped in an observable. */
+        public rawResult: KnockoutObservable<ListResult | null> = ko.observable(null);
+
+        protected loadStandardResponse = (data: ApiResult) => {
+            const listResult = data as ListResult;
+            this.page(listResult.page);
+            this.pageSize(listResult.pageSize);
+            this.totalCount(listResult.totalCount);
+            this.pageCount(listResult.pageCount);
+        }
     }
 
     export abstract class DataSource<T extends BaseViewModel> {
@@ -193,18 +340,22 @@ module Coalesce {
         }
     }
 
-    export abstract class BaseViewModel {
+    export abstract class ServiceClient {
+        public readonly abstract apiController: string;
+    }
 
-        protected modelName: string;
-        protected modelDisplayName: string;
+    export abstract class BaseViewModel implements LoadableViewModel, ClientMethodParent {
+
+        protected readonly abstract modelName: string;
+        protected readonly abstract modelDisplayName: string;
 
         // Typing this property as keyof this prevents us from using BaseViewModel amorphously.
         // It prevents assignment of an arbitrary derived type to a variable/parameter expecting BaseViewModel
         // because primaryKeyName on a derived type is wider than it is on BaseViewModel.
-        protected primaryKeyName: string;
+        protected readonly abstract primaryKeyName: string;
 
-        protected apiController: string;
-        protected viewController: string;
+        public readonly abstract apiController: string;
+        protected readonly abstract viewController: string;
 
         /**
             List of all possible data sources that can be set on the dataSource property.
@@ -219,7 +370,7 @@ module Coalesce {
         /**
             Properties which determine how this object behaves.
         */
-        public coalesceConfig: ViewModelConfiguration<this> = null;
+        public abstract coalesceConfig: ViewModelConfiguration<this>;
 
         /** Stack for number of times loading has been called. */
         protected loadingCount: number = 0;
@@ -250,9 +401,9 @@ module Coalesce {
         set showFailureAlerts(value) { this.coalesceConfig.showFailureAlerts(value) }
 
         /** Parent of this object, if this object was loaded as part of a hierarchy. */
-        public parent: BaseViewModel | BaseListViewModel<this> = null;
+        public parent: BaseViewModel | BaseListViewModel<this> | null;
         /** Parent of this object, if this object was loaded as part of list of objects. */
-        public parentCollection: KnockoutObservableArray<this> = null;
+        public parentCollection: KnockoutObservableArray<this> | null = null;
         /**
             Primary Key of the object.
             @deprecated Use the strongly-typed property of the key for this model whenever possible. This property will be removed once Coalesce supports composite keys.
@@ -262,7 +413,7 @@ module Coalesce {
         /** Dirty Flag. Set when a value on the model changes. Reset when the model is saved or reloaded. */
         public isDirty: KnockoutObservable<boolean> = ko.observable(false);
         /** Contains the error message from the last failed call to the server. */
-        public errorMessage: KnockoutObservable<string> = ko.observable(null);
+        public errorMessage: KnockoutObservable<string | null> = ko.observable(null);
 
         /**
             If this is true, all changes will be saved automatically.
@@ -297,7 +448,7 @@ module Coalesce {
             @returns true to bubble additional click events.
         */
         public selectSingle = (): boolean => {
-            if (this.parentCollection()) {
+            if (this.parentCollection && this.parentCollection()) {
                 $.each(this.parentCollection(), (i, obj) => {
                     obj.isSelected(false);
                 });
@@ -308,9 +459,9 @@ module Coalesce {
 
 
         /** List of errors found during validation. Any errors present will prevent saving. */
-        public errors: KnockoutValidationErrors = null;
+        public errors: KnockoutValidationErrors | null = null;
         /** List of warnings found during validation. Saving is still allowed with warnings present. */
-        public warnings: KnockoutValidationErrors = null;
+        public warnings: KnockoutValidationErrors | null = null;
 
         /** True if the object is currently saving. */
         public isSaving: KnockoutObservable<boolean> = ko.observable(false);
@@ -327,22 +478,22 @@ module Coalesce {
             Triggers any validation messages to be shown, and returns a bool that indicates if there are any validation errors.
         */
         public validate = (): boolean => {
-            if (this.errors) {
-                this.errors.showAllMessages();
-                this.warnings.showAllMessages();
-            }
+            if (this.errors) this.errors.showAllMessages();
+            if (this.warnings) this.warnings.showAllMessages();
             return this.isValid();
         };
 
         /** Setup knockout validation on this ViewModel. This is done automatically unless disabled with setupValidationAutomatically(false) */
-        public setupValidation: () => void;
+        public abstract setupValidation(): void;
 
         /** True if the object is loading. */
         public isLoading: KnockoutObservable<boolean> = ko.observable(false);
         /**  True once the data has been loaded. */
         public isLoaded: KnockoutObservable<boolean> = ko.observable(false);
         /** URL to a stock editor for this object. */
-        public editUrl: KnockoutComputed<string>;
+        public editUrl: KnockoutComputed<string> = ko.pureComputed(() => {
+            return this.coalesceConfig.baseViewUrl() + this.viewController + "/CreateEdit?id=" + ((this as any)[this.primaryKeyName])();
+        });
 
 
         /**
@@ -393,10 +544,10 @@ module Coalesce {
                     if (this.coalesceConfig.showBusyWhenSaving()) this.coalesceConfig.onStartBusy()(this);
                     this.isSaving(true);
 
-                    var url = `${this.coalesceConfig.baseApiUrl()}${this.apiController}/Save?includes=${this.includes}${this.dataSource.getQueryString()}`
+                    var url = `${this.coalesceConfig.baseApiUrl()}${this.apiController}/Save?includes=${this.includes}&${this.dataSource.getQueryString()}`
 
                     return $.ajax({ method: "POST", url: url, data: this.saveToDto(), xhrFields: { withCredentials: true } })
-                        .done((data) => {
+                        .done((data: ItemResult) => {
                             this.isDirty(false);
                             this.errorMessage(null);
                             if (this.coalesceConfig.loadResponseFromSaves()) {
@@ -409,12 +560,13 @@ module Coalesce {
                         })
                         .fail((xhr: JQueryXHR) => {
                             var errorMsg = "Unknown Error";
-                            if (xhr.responseJSON && xhr.responseJSON.message) errorMsg = xhr.responseJSON.message;
+                            const data: ItemResult | null = xhr.responseJSON
+                            if (data && data.message) errorMsg = data.message;
                             this.errorMessage(errorMsg);
 
                             // If an object was returned, load that object.
-                            if (xhr.responseJSON && xhr.responseJSON.object) {
-                                this.loadFromDto(xhr.responseJSON.object, true);
+                            if (data && data.object) {
+                                this.loadFromDto(data.object, true);
                             }
                             if (this.coalesceConfig.showFailureAlerts())
                                 this.coalesceConfig.onFailure()(this, "Could not save the item: " + errorMsg);
@@ -438,18 +590,18 @@ module Coalesce {
 
 
         /** Loads the object from the server based on the id specified. If no id is specified, the current id is used if one is set. */
-        public load = (id?: any, callback?: (self: this) => void): JQueryPromise<any> | undefined => {
+        public load = (id?: any, callback?: ((self: this) => void) | null): JQueryPromise<any> | undefined => {
             if (!id) {
-                id = this[this.primaryKeyName as keyof this]();
+                id = ((this as any)[this.primaryKeyName])();
             }
             if (id) {
                 this.isLoading(true);
                 this.coalesceConfig.onStartBusy()(this);
 
-                var url = `${this.coalesceConfig.baseApiUrl()}${this.apiController}/Get/${id}?includes=${this.includes}${this.dataSource.getQueryString()}`
+                var url = `${this.coalesceConfig.baseApiUrl()}${this.apiController}/Get/${id}?includes=${this.includes}&${this.dataSource.getQueryString()}`
                 
                 return $.ajax({ method: "GET", url: url, xhrFields: { withCredentials: true } })
-                    .done((data) => {
+                    .done((data: ItemResult) => {
                         this.errorMessage(null);
                         this.loadFromDto(data.object, true);
                         this.isLoaded(true);
@@ -457,9 +609,9 @@ module Coalesce {
                     })
                     .fail((xhr: JQueryXHR) => {
                         this.isLoaded(false);
-
+                        const data: ItemResult | null = xhr.responseJSON
                         var errorMsg = "Could not load " + this.modelName + " with ID = " + id;
-                        if (xhr.responseJSON && xhr.responseJSON.message) errorMsg = xhr.responseJSON.message;
+                        if (data && data.message) errorMsg = data.message;
 
                         this.errorMessage(errorMsg);
                         if (this.coalesceConfig.showFailureAlerts())
@@ -474,22 +626,33 @@ module Coalesce {
 
         /** Deletes the object without any prompt for confirmation. */
         public deleteItem = (callback?: (self: this) => void): JQueryPromise<any> | undefined => {
-            var currentId = this[this.primaryKeyName as keyof this]();
+            var currentId = ((this as any)[this.primaryKeyName])();
             if (currentId) {
                 return $.ajax({ method: "POST", url: this.coalesceConfig.baseApiUrl() + this.apiController + "/Delete/" + currentId, xhrFields: { withCredentials: true } })
-                    .done((data) => {
+                    .done((data: ItemResult) => {
                         this.errorMessage(null);
+
+                        if (data.object != null && this.coalesceConfig.loadResponseFromDeletes()) {
+                            this.loadFromDto(data.object, true);
+                        }
 
                         // Remove it from the parent collection
                         if (this.parentCollection && this.parent) {
-                            this.parent.isLoading(true);
-                            this.parentCollection.splice(this.parentCollection().indexOf(this), 1);
-                            this.parent.isLoading(false);
+                            var shouldRemoveFromParent = (data.object == null || this.coalesceConfig.removeFromParentAfterSoftDelete());
+                            if (!shouldRemoveFromParent) {
+                                // be a Good Citizen and tell the user why the item they just deleted wasn't removed from the parent collection, as this isn't always super intuitive.
+                                console.warn("Deleted item was not removed from its parent because the API call returned an object and this.coalesceConfig.removeFromParentAfterSoftDelete() == false")
+                            } else {
+                                this.parent.isLoading(true);
+                                this.parentCollection.splice(this.parentCollection().indexOf(this), 1);
+                                this.parent.isLoading(false);
+                            }
                         }
                     })
                     .fail((xhr: JQueryXHR) => {
                         var errorMsg = "Could not delete the item";
-                        if (xhr.responseJSON && xhr.responseJSON.message) errorMsg = xhr.responseJSON.message;
+                        const data: ItemResult | null = xhr.responseJSON
+                        if (data && data.message) errorMsg = data.message;
 
                         this.errorMessage(errorMsg);
                         if (this.coalesceConfig.showFailureAlerts())
@@ -535,22 +698,22 @@ module Coalesce {
             foreignId: any
         ): JQueryPromise<any> | boolean | undefined => {
 
-            var currentId = this[this.primaryKeyName as keyof this]();
+            var currentId = ((this as any)[this.primaryKeyName])();
 
             if (operation == 'added') {
                 var newItem = new constructor();
                 newItem.parent = this;
                 newItem.parentCollection = existingItems;
                 newItem.coalesceConfig.autoSaveEnabled(false);
-                newItem[localIdProp](currentId);
-                newItem[foreignIdProp](foreignId);
+                (newItem[localIdProp] as any)(currentId);
+                (newItem[foreignIdProp] as any)(foreignId);
                 return newItem.save(() => {
                     // Restore default autosave behavior.
                     newItem.coalesceConfig.autoSaveEnabled(null);
                     existingItems.push(newItem);
                 });
             } else if (operation == 'deleted') {
-                var matchedItems = existingItems().filter(i => i[localIdProp]() === currentId && i[foreignIdProp]() === foreignId);
+                var matchedItems = existingItems().filter((i: any) => i[localIdProp]() === currentId && i[foreignIdProp]() === foreignId);
                 if (matchedItems.length == 0) {
                     throw `Couldn't find a ${constructor.toString()} object to delete with ${localIdProp}=${currentId} & ${foreignIdProp}=${foreignId}.`
                 } else {
@@ -650,7 +813,7 @@ module Coalesce {
             Common base-class level initialization that depends on all constructors being ran
             (and therefore cannot be performed directly in the base constructor).
         */
-        protected baseInitialize = () => {
+        protected baseInitialize() {
 
             var dataSource = this.coalesceConfig.initialDataSource.peek();
             if (dataSource === null) {
@@ -668,8 +831,8 @@ module Coalesce {
             }
         }
 
-        constructor(parent: Coalesce.BaseViewModel | Coalesce.BaseListViewModel<any>) {
-            this.parent = parent;
+        constructor(parent?: Coalesce.BaseViewModel | Coalesce.BaseListViewModel<any> | null) {
+            this.parent = parent || null;
 
             // Handles setting the parent savingChildChange
             this.isSaving.subscribe((newValue: boolean) => {
@@ -680,11 +843,10 @@ module Coalesce {
         }
     }
 
-    export abstract class BaseListViewModel<TItem extends BaseViewModel> {
+    export abstract class BaseListViewModel<TItem extends BaseViewModel> implements ClientMethodParent {
 
-        protected abstract modelName: string;
-
-        protected abstract apiController: string;
+        public readonly abstract modelName: string;
+        public readonly abstract apiController: string;
 
         /**
             List of all possible data sources that can be set on the dataSource property.
@@ -707,7 +869,7 @@ module Coalesce {
         /**
             Properties which determine how this object behaves.
         */
-        public abstract coalesceConfig: ListViewModelConfiguration<this, TItem> = null;
+        public abstract coalesceConfig: ListViewModelConfiguration<this, TItem>;
 
         /**
             Query string to append to the API call when loading the list of items.
@@ -747,17 +909,18 @@ module Coalesce {
                 url: url,
                 xhrFields: { withCredentials: true }
             })
-                .done((data) => {
+                .done((data: ListResult) => {
+                    const list = data.list || [];
 
-                    Coalesce.KnockoutUtilities.RebuildArray(this.items, data.list, this.modelKeyName, this.itemClass, this, true);
+                    Coalesce.KnockoutUtilities.RebuildArray(this.items, list, this.modelKeyName, this.itemClass, this, true);
                     $.each(this.items(), (_, model) => {
                         model.includes = this.includes;
                     });
-                    this.count(data.list.length);
+                    this.count(list.length);
                     this.totalCount(data.totalCount);
                     this.pageCount(data.pageCount);
                     this.page(data.page);
-                    this.message(data.message);
+                    this.message(typeof(data.message) == "string" ? data.message : null);
                     this.isLoaded(true);
                     if (typeof(callback) == "function") callback(this);
                 })
@@ -825,7 +988,7 @@ module Coalesce {
         };
 
         /** Deletes an item. */
-        public deleteItem = (item: TItem): JQueryPromise<any> => {
+        public deleteItem = (item: TItem): JQueryPromise<any> | undefined => {
             return item.deleteItem();
         };
 
@@ -843,13 +1006,18 @@ module Coalesce {
                 url: this.coalesceConfig.baseApiUrl() + this.apiController + "/Count?" + this.queryParams('filter'),
                 xhrFields: { withCredentials: true }
             })
-                .done((data) => {
-                    this.count(data);
+                .done((data: ItemResult<number>) => {
+                    this.count(data.object || 0);
+                    this.message(typeof(data.message) == "string" ? data.message : null);
                     if (typeof(callback) == "function") callback();
                 })
-                .fail(() => {
+                .fail((xhr) => {
+                    var errorMsg = "Unknown Error";
+                    var result: ItemResult<number> = xhr.responseJSON;
+                    if (result && result.message) errorMsg = result.message;
+                    this.message(errorMsg);
                     if (this.coalesceConfig.showFailureAlerts())
-                        this.coalesceConfig.onFailure()(this, "Could not get count of " + this.modelName + " items.");
+                        this.coalesceConfig.onFailure()(this, "Could not get count of " + this.modelName + " items: " + errorMsg);
                 })
                 .always(() => {
                     this.coalesceConfig.onFinishBusy()(this);
@@ -857,22 +1025,22 @@ module Coalesce {
         };
 
         /** The result of getCount() or the total on this page. */
-        public count: KnockoutObservable<number> = ko.observable(null);
+        public count: KnockoutObservable<number | null> = ko.observable(null);
         /** Total count of items, even ones that are not on the page. */
-        public totalCount: KnockoutObservable<number> = ko.observable(null);
+        public totalCount: KnockoutObservable<number | null> = ko.observable(null);
         /** Total page count */
-        public pageCount: KnockoutObservable<number> = ko.observable(null);
+        public pageCount: KnockoutObservable<number | null> = ko.observable(null);
         /** Page number. This can be set to get a new page. */
         public page: KnockoutObservable<number> = ko.observable(1);
         /** Number of items on a page. */
         public pageSize: KnockoutObservable<number> = ko.observable(10);
         /** If a load failed, this is a message about why it failed. */
-        public message: KnockoutObservable<string> = ko.observable(null);
+        public message: KnockoutObservable<string | null> = ko.observable(null);
         /** Search criteria for the list. This can be exposed as a text box for searching. */
         public search: KnockoutObservable<string> = ko.observable("");
 
         /** True if there is another page after the current page. */
-        public nextPageEnabled: KnockoutComputed<boolean> = ko.computed(() => this.page() < this.pageCount());
+        public nextPageEnabled: KnockoutComputed<boolean> = ko.computed(() => this.page() < (this.pageCount() || 0));
 
         /** True if there is another page before the current page. */
         public previousPageEnabled: KnockoutComputed<boolean> = ko.computed(() => this.page() > 1);
@@ -903,12 +1071,10 @@ module Coalesce {
             if (this.orderBy() == field && !this.orderByDescending()) {
                 this.orderBy('');
                 this.orderByDescending(field);
-            }
-            else if (!this.orderBy() && this.orderByDescending() == field) {
+            } else if (!this.orderBy() && this.orderByDescending() == field) {
                 this.orderBy('');
                 this.orderByDescending('');
-            }
-            else {
+            } else {
                 this.orderBy(field);
                 this.orderByDescending('');
             }
