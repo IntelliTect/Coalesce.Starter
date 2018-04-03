@@ -27,12 +27,12 @@
                 <a asp-controller="Home" asp-action="Index" asp-route-area="" class="navbar-brand">@applicationName</a>
             </div>
             <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li><a asp-controller="Home" asp-action="About">About</a></li>
-                        <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
-                    </ul>
-                </div>
+                <ul class="nav navbar-nav">
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Home" asp-action="About">About</a></li>
+                    <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="container body-content">
@@ -44,14 +44,30 @@
     </div>
     <script src="~/lib/jquery/jquery.js"></script>
     <script src="~/lib/bootstrap/javascripts/bootstrap.js"></script>
-    <script src="~/lib/knockout/knockout.js"></script>
+    <script src="~/lib/knockout/knockout-latest.js"></script>
     <script src="~/lib/knockout-validation/knockout.validation.js"></script>
     <script src="~/lib/moment/moment.js"></script>
     <script src="~/lib/select2/js/select2.js"></script>
     <script src="~/lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
     <script src="~/js/app.js" asp-append-version="true"></script>
 
-    <script>var baseUrl = '@Url.Content("~/")';</script>
+    <script>
+        var baseUrl = '@Url.Content("~/")';
+
+        // Setup datetimepicker to use Font Awesome icons
+        $.fn.datetimepicker.defaults.icons = {
+            time: 'fa fa-clock-o',
+            date: 'fa fa-calendar',
+            up: 'fa fa-chevron-up',
+            down: 'fa fa-chevron-down',
+            previous: 'fa fa-chevron-left',
+            next: 'fa fa-chevron-right',
+            today: 'fa fa-dot-circle-o',
+            clear: 'fa fa-trash',
+            close: 'fa fa-times'
+        };
+
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
