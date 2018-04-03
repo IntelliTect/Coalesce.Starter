@@ -17,3 +17,6 @@ At this point, you can open up Visual Studio and run the application. However, y
 After you've started to grow content with your project, consider the following:
 
 * Remove the dummy authentication from `Startup.cs` and implement a proper authentication scheme.
+
+## Themeing
+Visit [Bootswatch](https://bootswatch.com/3/) to see the different choices available for themes.  To change themes, simply change the name of the imports in site.scss in the two marked locations.
