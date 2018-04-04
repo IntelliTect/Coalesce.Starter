@@ -22,6 +22,12 @@
     "moment": "^2.20.1",
     "typescript": "~2.3.2",
     "bootstrap-sass": "3.3.7",
-    "bootswatch": "3.3.7"
+    "bootswatch": "3.3.7",
+    "knockout": "3.4.2",
+    "knockout.validation": "2.0.3",
+    "select2": "4.0.5",
+    "jquery": "2.2.4",
+    "components-font-awesome": "4.7.0",
+    "eonasdan-bootstrap-datetimepicker": "4.17.47"
   }
 }
