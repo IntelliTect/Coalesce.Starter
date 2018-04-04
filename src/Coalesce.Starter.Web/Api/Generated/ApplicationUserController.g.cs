@@ -1,4 +1,4 @@
-﻿
+
 using Coalesce.Starter.Web.Models;
 using IntelliTect.Coalesce;
 using IntelliTect.Coalesce.Api;
@@ -31,7 +31,6 @@ namespace Coalesce.Starter.Web.Api
             GeneratedForClassViewModel = ReflectionRepository.Global.GetClassViewModel<Coalesce.Starter.Data.Models.ApplicationUser>();
         }
 
-
         [HttpGet("get/{id}")]
         [Authorize]
         public virtual Task<ItemResult<ApplicationUserDtoGen>> Get(
@@ -49,20 +48,10 @@ namespace Coalesce.Starter.Web.Api
 
         [HttpGet("count")]
         [Authorize]
-        public virtual Task<int> Count(
+        public virtual Task<ItemResult<int>> Count(
             FilterParameters parameters,
             IDataSource<Coalesce.Starter.Data.Models.ApplicationUser> dataSource)
             => CountImplementation(parameters, dataSource);
-
-
-        [HttpPost("delete/{id}")]
-        [Authorize]
-        public virtual Task<ItemResult> Delete(
-            int id,
-            IBehaviors<Coalesce.Starter.Data.Models.ApplicationUser> behaviors,
-            IDataSource<Coalesce.Starter.Data.Models.ApplicationUser> dataSource)
-            => DeleteImplementation(id, new DataSourceParameters(), dataSource, behaviors);
-
 
         [HttpPost("save")]
         [Authorize]
@@ -72,6 +61,14 @@ namespace Coalesce.Starter.Web.Api
             IDataSource<Coalesce.Starter.Data.Models.ApplicationUser> dataSource,
             IBehaviors<Coalesce.Starter.Data.Models.ApplicationUser> behaviors)
             => SaveImplementation(dto, parameters, dataSource, behaviors);
+
+        [HttpPost("delete/{id}")]
+        [Authorize]
+        public virtual Task<ItemResult<ApplicationUserDtoGen>> Delete(
+            int id,
+            IBehaviors<Coalesce.Starter.Data.Models.ApplicationUser> behaviors,
+            IDataSource<Coalesce.Starter.Data.Models.ApplicationUser> dataSource)
+            => DeleteImplementation(id, new DataSourceParameters(), dataSource, behaviors);
 
         /// <summary>
         /// Downloads CSV of ApplicationUserDtoGen
@@ -92,7 +89,6 @@ namespace Coalesce.Starter.Web.Api
             ListParameters parameters,
             IDataSource<Coalesce.Starter.Data.Models.ApplicationUser> dataSource)
             => CsvTextImplementation(parameters, dataSource);
-
 
         /// <summary>
         /// Saves CSV data as an uploaded file

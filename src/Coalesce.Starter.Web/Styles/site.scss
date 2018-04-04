@@ -1,7 +1,21 @@
-﻿body {
+﻿
+/* Change here to use a different Bootswatch theme
+                                   ==>><<==         */
+@import "./node_modules/bootswatch/flatly/_variables.scss";
+
+@import "../bower_components/bootstrap-sass/assets/stylesheets/_bootstrap";
+@import '../bower_components/components-font-awesome/scss/variables';
+@import '../bower_components/components-font-awesome/scss/core';
+@import '../bower_components/components-font-awesome/scss/icons';
+@import '../bower_components/components-font-awesome/scss/fixed-width';
+
+/* Change here to use a different Bootswatch theme
+                                   ==>><<==         */
+@import "./node_modules/bootswatch/flatly/_bootswatch";
+
+body {
     padding-top: 60px;
     padding-bottom: 20px;
-    background-color: #F8F8F8;
 }
 
 /* Set padding to keep content from hitting the edges */
@@ -17,7 +31,7 @@ td div.input-group.date {
 
 /* styles for validation helpers */
 .field-validation-error {
-    color: #b94a48;
+    color: $brand-danger;
 }
 
 .field-validation-valid {
@@ -25,7 +39,7 @@ td div.input-group.date {
 }
 
 input.input-validation-error {
-    border: 1px solid #b94a48;
+    border: 1px solid $brand-danger;
 }
 
 input[type="checkbox"].input-validation-error {
@@ -33,7 +47,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .validation-summary-errors {
-    color: #b94a48;
+    color: $brand-danger;
 }
 
 .validation-summary-valid {
@@ -93,7 +107,7 @@ dd > div > .form-control-static {
     background-color: #ffffff;
     -webkit-box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
     box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
-        
+
     .card-body {
         padding: 15px;
         flex-grow: 1;
@@ -114,14 +128,14 @@ dd > div > .form-control-static {
     }
 
     > .card-body + .table {
-        border-top: 1px solid #dddddd;
+        border-top: 1px solid $gray-light;
     }
 
     .card-heading {
-        padding: 10px 15px;
-        border-bottom: 1px solid #dddddd;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
+        padding: $panel-heading-padding;
+        border-bottom: 1px solid $gray-light;
+        border-top-right-radius: $border-radius-small;
+        border-top-left-radius: $border-radius-small;
     }
 
     .card-title {
