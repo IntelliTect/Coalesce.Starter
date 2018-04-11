@@ -90,14 +90,4 @@ if ($confirmation -eq 'y') {
 			$file | Rename-Item -NewName $file.Name.Replace($defaultNamespace, $rootNamespace)
 		}
 	}
-
-	
-	$attr = Get-Content (Join-Path -Path $PSScriptRoot -ChildPath .\.gitattributes) -Raw
-	if ($attr){
-		$newattr = $attr -replace $defaultNamespace, $rootNamespace
-		if ($attr -ne $newattr){
-			Write-Host "Fixing paths in .gitattributes"
-				[System.IO.File]::WriteAllText((Join-Path -Path $PSScriptRoot -ChildPath .\.gitattributes),$newattr)
-		}
-	}
 }
