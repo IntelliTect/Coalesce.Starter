@@ -5,6 +5,12 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{2120AF57-3C7F-47D3-BDEC-470CDAD2D1DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FB58B8EA-A133-4430-B932-ED47D787517F}"
+	ProjectSection(SolutionItems) = preProject
+		coalesce.json = coalesce.json
+		NuGet.Config = NuGet.Config
+		README.md = README.md
+		RenameProject.ps1 = RenameProject.ps1
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{16DC6DBB-D58A-4BAF-AA68-32A995330D46}"
 EndProject
