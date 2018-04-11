@@ -69,7 +69,7 @@ gulp.task("copy-lib",
         const packages = {
             "bootstrap": "bootstrap-sass/assets/**/bootstrap*.{js,map}",
             "bootstrap/fonts": "bootstrap-sass/assets/fonts/**/*.{,eot,svg,ttf,woff,woff2}",
-            "jquery": "jquery/dist/jquery*.{js,map}",
+            "jquery": "jquery/dist/*.{js,map}",
             "font-awesome": "components-font-awesome/**/*.{css,otf,eot,svg,ttf,woff,woff2}",
             "moment": "moment/moment.js",
             "knockout": "knockout/build/output/*.js",
