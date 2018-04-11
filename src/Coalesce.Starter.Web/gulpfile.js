@@ -75,6 +75,7 @@ gulp.task("copy-lib",
             "knockout": "knockout/build/output/*.js",
             "knockout-validation": "knockout.validation/dist/*.js",
             "select2": "select2/dist/**/*.{css,js}",
+            "select2-bootstrap": "select2-bootstrap-theme/dist/*.css",
             "bootstrap-datetimepicker": "eonasdan-bootstrap-datetimepicker/build/**/*.{css,js}"
         };
 
