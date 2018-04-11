@@ -11,6 +11,7 @@
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" rel="stylesheet" />
     <link href="~/lib/select2/css/select2.css" rel="stylesheet" />
+    <link href="~/lib/select2-bootstrap/select2-bootstrap.css" rel="stylesheet" />
     <link href="~/lib/font-awesome/css/font-awesome.css" rel="stylesheet" />
 
     @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>*@
@@ -31,6 +32,9 @@
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
                     <li><a asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-controller="Home" asp-action="Contact">Contact</a></li>
+                </ul>
+		<ul class="nav navbar-nav navbar-right">
+                    <li class="navbar-text">Signed in as @User.Identity.Name</li>
                 </ul>
             </div>
         </div>
@@ -66,6 +70,8 @@
             clear: 'fa fa-trash',
             close: 'fa fa-times'
         };
+
+        Coalesce.GlobalConfiguration.app.select2Theme("bootstrap");
 
     </script>
     @RenderSection("Scripts", required: false)
