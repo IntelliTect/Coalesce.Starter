@@ -135,7 +135,7 @@ gulp.task('ts', function () {
 
     // now compile the individual page files
     var individualFileTypescriptProject = typescriptCompiler.createProject('tsconfig.json');
-    var individualTsResult = gulp.src([paths.scripts + '/*.ts', '!' + paths.scripts + '/{intellitect,Ko,ko}*.ts'])
+    var individualTsResult = gulp.src([paths.scripts + '/*.ts', '!' + paths.scripts + '/{coalesce,Ko,ko}*.ts'])
         .pipe(sourcemaps.init())
         .pipe(individualFileTypescriptProject());
 

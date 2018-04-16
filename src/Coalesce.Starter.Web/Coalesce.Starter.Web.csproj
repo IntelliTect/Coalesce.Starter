@@ -19,11 +19,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
-    <PackageReference Include="IntelliTect.Coalesce.Knockout" Version="2.0.0-alpha-250" />
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.6" />
+    <PackageReference Include="IntelliTect.Coalesce.Knockout" Version="2.0.0-alpha-272" />
   </ItemGroup>
 
   <ItemGroup>
-    <DotNetCliToolReference Include="IntelliTect.Coalesce.Tools" Version="2.0.0-alpha-250" />
+    <DotNetCliToolReference Include="IntelliTect.Coalesce.Tools" Version="2.0.0-alpha-272" />
   </ItemGroup>  
 </Project>
