@@ -81,7 +81,6 @@
 
 @section Scripts
 {
-
     <script>
         @if (!ViewBag.Editable)
         {
@@ -94,7 +93,7 @@
         {
             @:applicationUserList.queryString = "@(ViewBag.Query)";
         }
-
+        
         // Save and restore values from the URL:
         var urlVariables = ['page', 'pageSize', 'search', 'orderBy', 'orderByDescending'];
         $.each(urlVariables, function(){
@@ -103,20 +102,19 @@
         })
         applicationUserList.isLoading.subscribe(function(){
             var newUrl = window.location.href;
-            
+        
             $.each(urlVariables, function(){
                 var param = applicationUserList[this]();
                 newUrl = Coalesce.Utilities.SetUrlParameter(newUrl, this, param);
             })
             history.replaceState(null, document.title, newUrl);
         });
-
+        
         applicationUserList.isSavingAutomatically = false;
         ko.applyBindings(applicationUserList);
         applicationUserList.isSavingAutomatically = true;
-
+        
         applicationUserList.includes = "ApplicationUserListGen";
         applicationUserList.load();
-
     </script>
 }
